@@ -13,18 +13,6 @@ const User = require("./models/user");
 
 require("dotenv").config();
 
-app.get("/force-test", async (req, res) => {
-  const u = new User({
-    username: "forceuser",
-    email: "force@test.com",
-    password: "123456"
-  });
-
-  await u.save();
-
-  res.send("FORCE INSERT DONE");
-});
-
 /* ================= SESSION ================= */
 app.use(
   session({
@@ -48,6 +36,16 @@ app.engine("ejs", ejsMate);
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
+
+/* ================= GLOBAL currentUser ================= */
+app.use(async (req, res, next) => {
+  if (req.session.userId) {
+    res.locals.currentUser = await User.findById(req.session.userId);
+  } else {
+    res.locals.currentUser = null;
+  }
+  next();
+});
 
 /* ================= AUTH MIDDLEWARE ================= */
 function isLoggedIn(req, res, next) {
@@ -91,10 +89,10 @@ app.post("/signup", async (req, res) => {
 
   const hashed = await bcrypt.hash(password, 12);
   const user = new User({ username, email, password: hashed });
-  await user.save();
 
-  // ✅ auto login after signup
+  await user.save();
   req.session.userId = user._id;
+
   res.redirect("/listings");
 });
 
@@ -117,11 +115,9 @@ app.get("/listings/new", isLoggedIn, (req, res) => {
   res.render("listings/new");
 });
 
-// CREATE (FINAL SAFE VERSION)
+// CREATE
 app.post("/listings", isLoggedIn, async (req, res) => {
-  if (!req.body.listing) {
-    return res.send("Invalid listing data");
-  }
+  if (!req.body.listing) return res.send("Invalid listing data");
 
   const listing = new Listing(req.body.listing);
   listing.owner = req.session.userId;
@@ -159,20 +155,30 @@ app.delete("/listings/:id", isLoggedIn, async (req, res) => {
   res.redirect("/listings");
 });
 
-// BUY
-app.put("/listings/:id/buy", isLoggedIn, async (req, res) => {
+// BUY (FINAL)
+app.post("/listings/:id/buy", isLoggedIn, async (req, res) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing) return res.send("Listing not found");
 
   if (listing.isSold) return res.send("Already sold");
+
   if (listing.owner.equals(req.session.userId)) {
     return res.send("You cannot buy your own listing");
   }
 
+  const { name, email, address } = req.body;
+
   listing.isSold = true;
   listing.buyer = req.session.userId;
-  await listing.save();
+  listing.soldPrice = listing.price;
 
+  listing.buyerDetails = {
+    name,
+    email,
+    address,
+  };
+
+  await listing.save();
   res.redirect(`/listings/${listing._id}`);
 });
 
@@ -189,23 +195,6 @@ app.post("/listings/:id/reviews", isLoggedIn, async (req, res) => {
 
   res.redirect(`/listings/${req.params.id}`);
 });
-
-app.get("/force-test", async (req, res) => {
-  try {
-    const u = new User({
-      username: "forceuser",
-      email: "force@test.com",
-      password: "123456"
-    });
-
-    await u.save();
-    res.send("FORCE INSERT DONE");
-  } catch (e) {
-    console.error(e);
-    res.send("ERROR: " + e.message);
-  }
-});
-
 
 /* ================= 404 ================= */
 app.use((req, res) => {
