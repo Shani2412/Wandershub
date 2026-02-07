@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body{
   display: flex !important;
   flex-direction: column !important;
@@ -107,3 +108,227 @@ body{
   padding-left:0 !important;
   padding-right:0 !important;
 }
+=======
+/* ===============================
+   GLOBAL STYLES
+================================ */
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f9;
+  color: #333;
+}
+
+/* ===============================
+   LINKS
+================================ */
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/* ===============================
+   CARDS (Login, Signup, Listings)
+================================ */
+
+.card {
+  border-radius: 16px;
+  transition: all 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+}
+
+.card.shadow-lg {
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* ===============================
+   FORMS
+================================ */
+
+.form-control {
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid #ced4da;
+}
+
+.form-control:focus {
+  border-color: #fca311;
+  box-shadow: 0 0 0 0.15rem rgba(252, 163, 17, 0.25);
+}
+
+/* ===============================
+   BUTTONS
+================================ */
+
+.btn {
+  border-radius: 10px;
+}
+
+.btn-warning {
+  background-color: #fca311;
+  border: none;
+  color: #000;
+}
+
+.btn-warning:hover {
+  background-color: #e39400;
+  color: #000;
+}
+
+.btn-dark {
+  border-radius: 10px;
+}
+
+.btn-danger {
+  border-radius: 10px;
+}
+
+/* ===============================
+   ALERTS
+================================ */
+
+.alert {
+  border-radius: 12px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ===============================
+   LISTINGS
+================================ */
+
+.show-card {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.show-img {
+  height: 320px;
+  object-fit: cover;
+}
+
+.badge-available {
+  background-color: #198754;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.badge-sold {
+  background-color: #dc3545;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.request-info {
+  background-color: #fff3cd;
+  border-left: 5px solid #ffc107;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+/* ===============================
+   REVIEWS
+================================ */
+
+.star-rating span {
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.star-rating span.active {
+  color: #fca311;
+}
+
+.review-card {
+  border-radius: 14px;
+  background-color: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.review-username {
+  font-weight: 600;
+  color: #1c2541;
+}
+
+/* ===============================
+   FOOTER
+================================ */
+
+footer {
+  background-color: #1c2541;
+  color: #eaeaea;
+}
+
+/* ===============================
+   ANIMATIONS
+================================ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+
+/* Login error style (minimal & clean) */
+.login-error-box {
+  background: #ffe5e5;
+  border-left: 5px solid #dc3545;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+  animation: shake 0.3s ease;
+}
+
+.login-error-box strong {
+  color: #dc3545;
+  display: block;
+}
+
+.login-error-box p {
+  margin: 0;
+  font-weight: 500;
+}
+.d-flex form {
+  margin: 0;
+}
+
+
+/* subtle shake animation */
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+
+/* ===============================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 768px) {
+  .show-img {
+    height: 240px;
+  }
+}
+>>>>>>> db6f97cef84d9e97ba22f93d597a233a8b10154b

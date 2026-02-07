@@ -2,7 +2,10 @@
 <html>
 <head>
   <title>Login</title>
+<<<<<<< HEAD
   
+=======
+>>>>>>> db6f97cef84d9e97ba22f93d597a233a8b10154b
 
   <style>
     body {
@@ -84,6 +87,7 @@
       font-weight: bold;
       cursor: pointer;
     }
+<<<<<<< HEAD
   </style>
 </head>
 <body>
@@ -95,6 +99,43 @@
       <button type="submit">Login</button>
     </form>
     <p class="signup-text">Don’t have an account? <a href="/signup">Sign up</a></p>
+=======
+
+    /* ERROR BOX */
+    .login-error-box {
+      background: rgba(255, 0, 0, 0.2);
+      border: 1px solid rgba(255, 0, 0, 0.5);
+      color: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="login-container">
+    <h1>🏡 Wandershub</h1>
+    <h1>Login</h1>
+
+    <% if (error) { %>
+      <div class="login-error-box">
+        <strong>Login Failed</strong>
+        <p><%= error %></p>
+      </div>
+    <% } %>
+
+    <form action="/login" method="POST">
+      <input type="text" name="email" placeholder="Email" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <p class="signup-text">
+      Don’t have an account? <a href="/signup">Sign up</a>
+    </p>
+>>>>>>> db6f97cef84d9e97ba22f93d597a233a8b10154b
   </div>
 </body>
 </html>
