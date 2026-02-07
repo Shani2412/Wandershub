@@ -1,0 +1,84 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container mt-4">
+
+  <h2 class="mb-4">Purchase Requests</h2>
+
+  <% if (listings.length === 0) { %>
+    <p class="text-muted">No pending purchase requests.</p>
+  <% } else { %>
+
+    <% for (let listing of listings) { %>
+
+      <% if (listing.purchaseRequest && listing.purchaseRequest.status === "pending") { %>
+
+        <div class="card mb-3">
+          <div class="card-body">
+
+            <!-- LISTING INFO -->
+            <h5 class="card-title"><%= listing.title %></h5>
+            <p class="text-muted mb-2">
+              Price: ₹ <%= listing.price.toLocaleString("en-IN") %>
+            </p>
+
+            <!-- BUYER DETAILS -->
+            <div class="mb-3">
+              <strong>Buyer Details</strong>
+              <ul class="mb-0">
+                <li>
+                  <strong>Name:</strong>
+                  <%= listing.purchaseRequest.buyerDetails?.name || "N/A" %>
+                </li>
+                <li>
+                  <strong>Email:</strong>
+                  <%= listing.purchaseRequest.buyerDetails?.email || "N/A" %>
+                </li>
+                <li>
+                  <strong>Address:</strong>
+                  <%= listing.purchaseRequest.buyerDetails?.address || "N/A" %>
+                </li>
+              </ul>
+            </div>
+
+            <!-- ACTION BUTTONS -->
+            <div class="d-flex gap-2">
+
+              <a
+                href="/listings/<%= listing._id %>"
+                class="btn btn-sm btn-outline-primary"
+              >
+                View Listing
+              </a>
+
+              <form
+                action="/listings/<%= listing._id %>/approve"
+                method="POST"
+                style="display:inline;"
+              >
+                <button class="btn btn-sm btn-success">
+                  Approve
+                </button>
+              </form>
+
+              <form
+                action="/listings/<%= listing._id %>/decline"
+                method="POST"
+                style="display:inline;"
+              >
+                <button class="btn btn-sm btn-danger">
+                  Decline
+                </button>
+              </form>
+
+            </div>
+
+          </div>
+        </div>
+
+      <% } %>
+
+    <% } %>
+
+  <% } %>
+
+</div>
