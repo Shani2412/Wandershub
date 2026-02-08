@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
@@ -14,8 +15,10 @@ const session = require("express-session");
 const Listing = require("./models/listing");
 const Review = require("./models/review");
 const User = require("./models/user");
+const multer = require("multer");
+const { storage } = require("./utils/cloudinary");
+const upload = multer({ storage });
 
-require("dotenv").config();
 
 /* ================= DATABASE ================= */
 mongoose
