@@ -17,7 +17,10 @@ const Review = require("./models/review");
 const User = require("./models/user");
 const multer = require("multer");
 const { storage } = require("./utils/cloudinary");
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB (mobile safe)
+});
 
 
 /* ================= DATABASE ================= */
@@ -161,25 +164,31 @@ app.post(
   isLoggedIn,
   upload.single("image"),
   async (req, res) => {
-    const listing = new Listing(req.body.listing);
+    try {
+      const listing = new Listing(req.body.listing);
+      listing.owner = req.session.userId;
 
-    // owner set
-    listing.owner = req.session.userId;
+      // 🔴 MOBILE EDGE CASE GUARD
+      if (!req.file) {
+        return res.status(400).send("Image upload failed");
+      }
 
-    // image from Cloudinary
-    if (req.file) {
       listing.image = {
         url: req.file.path,
         filename: req.file.filename,
       };
+
+      listing.purchaseRequest = null;
+      await listing.save();
+
+      res.redirect(`/listings/${listing._id}`);
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
     }
-
-    listing.purchaseRequest = null;
-
-    await listing.save();
-    res.redirect(`/listings/${listing._id}`);
   }
 );
+
 
 
 // SHOW

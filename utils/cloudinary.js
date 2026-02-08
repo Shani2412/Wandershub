@@ -12,9 +12,10 @@ const storage = new CloudinaryStorage({
   params: {
     folder: "wanderahub",
     resource_type: "image",
-    format: "jpg",   // auto convert HEIC → JPG
+    transformation: [{ format: "jpg" }], // HEIC/HEIF → JPG
   },
 });
+
 
 
 module.exports = {
