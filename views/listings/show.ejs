@@ -7,8 +7,9 @@
   </div>
 
   <div class="card col-6 offset-3 show-card <%= listing.isSold ? 'sold' : '' %>">
+    <!-- 🔴 CLOUDINARY IMAGE -->
     <img
-      src="<%= listing.image %>"
+      src="<%= listing.image && listing.image.url ? listing.image.url : '/images/placeholder.jpg' %>"
       class="card-img-top show-img"
       alt="<%= listing.title %>"
     />
@@ -34,7 +35,7 @@
 <!-- ================= SELLER ALERT ================= -->
 <% if (
   currentUser &&
-  currentUser.role === "seller" &&
+  isSeller &&
   listing.owner &&
   listing.owner._id.equals(currentUser._id) &&
   !listing.isSold &&
@@ -81,7 +82,6 @@
       <!-- BUYER: REQUEST ALREADY SENT -->
       <% if (
         currentUser &&
-        currentUser.role === "buyer" &&
         listing.purchaseRequest &&
         listing.purchaseRequest.status === "pending" &&
         listing.purchaseRequest.buyer &&
@@ -93,7 +93,6 @@
       <!-- BUYER: CAN BUY -->
       <% } else if (
         currentUser &&
-        currentUser.role === "buyer" &&
         !listing.purchaseRequest
       ) { %>
 
@@ -118,7 +117,6 @@
 
     <% if (currentUser) { %>
       <form action="/listings/<%= listing._id %>/reviews" method="POST">
-
         <div class="mb-3">
           <label class="form-label">Rating</label>
           <input

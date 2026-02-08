@@ -10,7 +10,14 @@
 
 <div class="row">
   <div class="col-8 offset-2">
-    <form action="/listings" method="POST" novalidate class="needs-validation">
+    <!-- 🔴 enctype ADD KARNA MANDATORY -->
+    <form
+      action="/listings"
+      method="POST"
+      enctype="multipart/form-data"
+      novalidate
+      class="needs-validation"
+    >
       <br>
       <h1 class="text-center">Create a new listing</h1>
 
@@ -26,9 +33,17 @@
         <div class="invalid-feedback">Please enter valid description</div>
       </div>
 
+      <!-- 🔴 IMAGE INPUT CHANGE -->
       <div class="mb-3">
-        <label class="form-label">Enter Image URL</label>
-        <input type="text" name="listing[image]" class="form-control">
+        <label class="form-label">Upload Image</label>
+        <input
+          type="file"
+          name="image"
+          class="form-control"
+          accept="image/*"
+          required
+        >
+        <div class="invalid-feedback">Please upload an image</div>
       </div>
 
       <div class="row">

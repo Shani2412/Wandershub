@@ -50,6 +50,13 @@ app.use(async (req, res, next) => {
   if (!req.session.userId) return next();
 
   const user = await User.findById(req.session.userId);
+
+  // 🔴 MOST IMPORTANT GUARD
+  if (!user) {
+    req.session.destroy(); // stale / invalid session clear
+    return next();
+  }
+
   res.locals.currentUser = user;
 
   // REAL SELLER CHECK = USER OWNS AT LEAST ONE LISTING
@@ -67,6 +74,7 @@ app.use(async (req, res, next) => {
 
   next();
 });
+
 
 /* ================= AUTH MIDDLEWARE ================= */
 function isLoggedIn(req, res, next) {
@@ -145,13 +153,31 @@ app.get("/listings/new", isLoggedIn, (req, res) => {
 });
 
 // CREATE
-app.post("/listings", isLoggedIn, async (req, res) => {
-  const listing = new Listing(req.body.listing);
-  listing.owner = req.session.userId;
-  listing.purchaseRequest = null;
-  await listing.save();
-  res.redirect(`/listings/${listing._id}`);
-});
+app.post(
+  "/listings",
+  isLoggedIn,
+  upload.single("image"),
+  async (req, res) => {
+    const listing = new Listing(req.body.listing);
+
+    // owner set
+    listing.owner = req.session.userId;
+
+    // image from Cloudinary
+    if (req.file) {
+      listing.image = {
+        url: req.file.path,
+        filename: req.file.filename,
+      };
+    }
+
+    listing.purchaseRequest = null;
+
+    await listing.save();
+    res.redirect(`/listings/${listing._id}`);
+  }
+);
+
 
 // SHOW
 app.get("/listings/:id", async (req, res) => {

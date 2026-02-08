@@ -4,7 +4,11 @@ const Schema = mongoose.Schema;
 const listingSchema = new Schema({
   title: String,
   description: String,
-  image: String,
+  image: {
+  url: String,
+  filename: String,
+},
+
   price: Number,
   location: String,
   country: String,
