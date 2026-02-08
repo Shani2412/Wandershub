@@ -165,13 +165,23 @@ app.post(
   upload.single("image"),
   async (req, res) => {
     try {
+      const { title, description, price, location, country } = req.body.listing;
+
+      // SERVER VALIDATION (NO STATUS CODE)
+      if (!title || !description || !price || !location || !country) {
+        return res.render("listings/new", {
+          error: "All fields are mandatory",
+        });
+      }
+
+      if (!req.file) {
+        return res.render("listings/new", {
+          error: "Image is required",
+        });
+      }
+
       const listing = new Listing(req.body.listing);
       listing.owner = req.session.userId;
-
-      // 🔴 MOBILE EDGE CASE GUARD
-      if (!req.file) {
-        return res.status(400).send("Image upload failed");
-      }
 
       listing.image = {
         url: req.file.path,
@@ -188,6 +198,8 @@ app.post(
     }
   }
 );
+
+
 
 
 

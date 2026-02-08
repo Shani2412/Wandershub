@@ -3,30 +3,44 @@
 <!-- ================= LISTING DETAILS ================= -->
 <div class="row mt-3">
   <div class="col-8 offset-3">
-    <h3><%= listing.title %></h3>
+    <h3><%= listing.title || "No title provided" %></h3>
   </div>
 
   <div class="card col-6 offset-3 show-card <%= listing.isSold ? 'sold' : '' %>">
-    <!-- 🔴 CLOUDINARY IMAGE -->
+    <!-- IMAGE SAFE -->
     <img
       src="<%= listing.image && listing.image.url ? listing.image.url : '/images/placeholder.jpg' %>"
       class="card-img-top show-img"
-      alt="<%= listing.title %>"
+      alt="<%= listing.title || 'Listing image' %>"
     />
 
     <div class="card-body">
       <p class="card-text">
-        <%= listing.description %><br /><br />
 
-        <b>₹ <%= listing.price.toLocaleString("en-IN") %></b><br />
-        <b>Location:</b> <%= listing.location %><br />
-        <b>Country:</b> <%= listing.country %><br />
+        <!-- DESCRIPTION SAFE -->
+        <%= listing.description || "No description provided" %>
+        <br /><br />
+
+        <!-- PRICE SAFE (NO CRASH) -->
+        <b>
+          <% if (listing.price !== undefined && listing.price !== null && listing.price !== "") { %>
+            ₹ <%= Number(listing.price).toLocaleString("en-IN") %>
+          <% } else { %>
+            Price not available
+          <% } %>
+        </b>
+        <br />
+
+        <!-- LOCATION / COUNTRY SAFE -->
+        <b>Location:</b> <%= listing.location || "N/A" %><br />
+        <b>Country:</b> <%= listing.country || "N/A" %><br />
 
         <% if (listing.isSold) { %>
           <span class="badge badge-sold">SOLD OUT</span>
         <% } else { %>
           <span class="badge badge-available">AVAILABLE</span>
         <% } %>
+
       </p>
     </div>
   </div>
@@ -79,7 +93,6 @@
 
     <% } else { %>
 
-      <!-- BUYER: REQUEST ALREADY SENT -->
       <% if (
         currentUser &&
         listing.purchaseRequest &&
@@ -90,11 +103,7 @@
 
         <button class="btn btn-warning" disabled>Request Sent</button>
 
-      <!-- BUYER: CAN BUY -->
-      <% } else if (
-        currentUser &&
-        !listing.purchaseRequest
-      ) { %>
+      <% } else if (currentUser && !listing.purchaseRequest) { %>
 
         <a href="/listings/<%= listing._id %>/buy" class="btn btn-success">
           BUY NOW
@@ -119,13 +128,7 @@
       <form action="/listings/<%= listing._id %>/reviews" method="POST">
         <div class="mb-3">
           <label class="form-label">Rating</label>
-          <input
-            type="hidden"
-            name="review[rating]"
-            id="ratingInput"
-            value="0"
-            required
-          />
+          <input type="hidden" name="review[rating]" id="ratingInput" value="0" required />
 
           <div id="starRating" class="star-rating">
             <span data-value="1">★</span>
@@ -138,12 +141,7 @@
 
         <div class="mb-3">
           <label class="form-label">Comment</label>
-          <textarea
-            name="review[comment]"
-            rows="4"
-            class="form-control"
-            required
-          ></textarea>
+          <textarea name="review[comment]" rows="4" class="form-control" required></textarea>
         </div>
 
         <button class="btn btn-primary">Submit Review</button>
@@ -160,7 +158,6 @@
       <% for (let review of listing.reviews) { %>
         <div class="card mb-3">
           <div class="card-body">
-
             <h6 class="mb-1">
               @<%= review.author ? review.author.username : "Deleted User" %>
             </h6>
@@ -189,11 +186,9 @@
                 <button class="btn btn-sm btn-danger">Delete</button>
               </form>
             <% } %>
-
           </div>
         </div>
       <% } %>
-
     <% } else { %>
       <p>No reviews yet.</p>
     <% } %>

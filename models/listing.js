@@ -2,43 +2,74 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const listingSchema = new Schema({
-  title: String,
-  description: String,
-  image: {
-  url: String,
-  filename: String,
-},
+  title: {
+    type: String,
+    required: [true, "Title is required"],
+    trim: true
+  },
 
-  price: Number,
-  location: String,
-  country: String,
+  description: {
+    type: String,
+    required: [true, "Description is required"],
+    trim: true
+  },
+
+  image: {
+    url: {
+      type: String,
+      required: true
+    },
+    filename: {
+      type: String,
+      required: true
+    }
+  },
+
+  price: {
+    type: Number,
+    required: [true, "Price is required"],
+    min: 0
+  },
+
+  location: {
+    type: String,
+    required: [true, "Location is required"],
+    trim: true
+  },
+
+  country: {
+    type: String,
+    required: [true, "Country is required"],
+    trim: true
+  },
 
   owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true
   },
 
   reviews: [
     {
       type: Schema.Types.ObjectId,
-      ref: "Review",
-    },
+      ref: "Review"
+    }
   ],
 
   isSold: {
     type: Boolean,
-    default: false,
+    default: false
   },
 
   buyer: {
     type: Schema.Types.ObjectId,
-    ref: "User",
+    ref: "User"
   },
 
   buyerDetails: {
     name: String,
     email: String,
-    address: String,
+    address: String
   },
 
   soldPrice: Number,
@@ -46,7 +77,7 @@ const listingSchema = new Schema({
   purchaseRequest: {
     type: {
       buyer: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: "User"
       },
       buyerDetails: {
@@ -66,8 +97,6 @@ const listingSchema = new Schema({
     },
     default: null
   }
-  ,
-
 });
 
 module.exports = mongoose.model("Listing", listingSchema);

@@ -17,28 +17,7 @@
   <link rel="stylesheet" href="/css/style.css" />
 
 </head>
-<script>
-  (() => {
-    'use strict';
 
-    const forms = document.querySelectorAll('.needs-validation');
-
-    Array.from(forms).forEach((form) => {
-      form.addEventListener(
-        'submit',
-        (event) => {
-          if (!form.checkValidity()) {
-            event.preventDefault();
-            event.stopPropagation();
-          }
-
-          form.classList.add('was-validated');
-        },
-        false
-      );
-    });
-  })();
-</script>
 
 <body class="bg-light d-flex flex-column min-vh-100">
 
@@ -65,4 +44,26 @@
   </script>
 
 </body>
+<script>
+  (() => {
+    'use strict';
+
+    const forms = document.querySelectorAll('.needs-validation');
+
+    Array.from(forms).forEach((form) => {
+      form.addEventListener(
+        'submit',
+        (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+
+          form.classList.add('was-validated');
+        },
+        false
+      );
+    });
+  })();
+</script>
 </html>
