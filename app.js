@@ -183,10 +183,13 @@ app.post(
       const listing = new Listing(req.body.listing);
       listing.owner = req.session.userId;
 
-      listing.image = {
-        url: req.file.path,
-        filename: req.file.filename,
-      };
+      if (req.file) {
+  listing.image = {
+    url: req.file.path,
+    filename: req.file.filename
+  };
+}
+
 
       listing.purchaseRequest = null;
       await listing.save();
