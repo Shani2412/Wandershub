@@ -17,7 +17,6 @@ const listingSchema = new Schema({
   image: {
     url: {
       type: String,
-      required: true
     },
     filename: {
       type: String,

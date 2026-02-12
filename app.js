@@ -174,11 +174,13 @@ app.post(
         });
       }
 
-      if (!req.file) {
-        return res.render("listings/new", {
-          error: "Image is required",
-        });
-      }
+     if (req.file) {
+  listing.image = {
+    url: req.file.path,
+    filename: req.file.filename
+  };
+}
+
 
       const listing = new Listing(req.body.listing);
       listing.owner = req.session.userId;
@@ -232,17 +234,38 @@ app.get("/listings/:id/edit", isLoggedIn, async (req, res) => {
 });
 
 // UPDATE
-app.put("/listings/:id", isLoggedIn, async (req, res) => {
-  const listing = await Listing.findById(req.params.id);
-  if (!listing || listing.isSold) return res.redirect("/listings");
+app.put(
+  "/listings/:id",
+  isLoggedIn,
+  upload.single("image"),
+  async (req, res) => {
 
-  if (!listing.owner.equals(req.session.userId)) {
-    return res.redirect(`/listings/${listing._id}`);
+    const listing = await Listing.findById(req.params.id);
+    if (!listing || listing.isSold) return res.redirect("/listings");
+
+    if (!listing.owner.equals(req.session.userId)) {
+      return res.redirect(`/listings/${listing._id}`);
+    }
+
+    // 🔥 Safe update
+    if (req.body && req.body.listing) {
+      Object.assign(listing, req.body.listing);
+    }
+
+    // 🔥 Image update only if new file uploaded
+    if (req.file) {
+      listing.image = {
+        url: req.file.path,
+        filename: req.file.filename
+      };
+    }
+
+    await listing.save();
+    res.redirect(`/listings/${listing._id}`);
   }
+);
 
-  await Listing.findByIdAndUpdate(req.params.id, req.body.listing);
-  res.redirect(`/listings/${req.params.id}`);
-});
+
 
 // DELETE
 app.delete("/listings/:id", isLoggedIn, async (req, res) => {
