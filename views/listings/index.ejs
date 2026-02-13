@@ -1,6 +1,6 @@
 <% layout('/layouts/boilerplate') %>
 
-<h1>All listings</h1>
+<h1>All Listings</h1>
 
 <div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-1 g-3">
   <% for (let listing of allListings) { %>
@@ -10,9 +10,16 @@
       style="text-decoration: none"
     >
       <div class="card col">
-        <!-- 🔴 CLOUDINARY IMAGE FIX -->
+
+        <% 
+          let imgUrl = '/images/placeholder.jpg';
+          if (listing.images && listing.images.length > 0) {
+            imgUrl = listing.images[0].url;
+          }
+        %>
+
         <img
-          src="<%= listing.image && listing.image.url ? listing.image.url : '/images/placeholder.jpg' %>"
+          src="<%= imgUrl %>"
           class="card-img-top"
           alt="<%= listing.title %>"
           style="height: 20rem; object-fit: cover;"
@@ -31,7 +38,9 @@
             <% } %>
           </p>
         </div>
+
       </div>
     </a>
   <% } %>
 </div>
+
