@@ -7,21 +7,30 @@
   </div>
 
   <div class="card col-6 offset-3 show-card <%= listing.isSold ? 'sold' : '' %>">
-    <!-- IMAGE SAFE -->
-    <img
-      src="<%= listing.image && listing.image.url ? listing.image.url : '/images/placeholder.jpg' %>"
-      class="card-img-top show-img"
-      alt="<%= listing.title || 'Listing image' %>"
-    />
+
+    <!-- ✅ MULTIPLE IMAGES SUPPORT -->
+    <% if (listing.images && listing.images.length > 0) { %>
+      <% listing.images.forEach((img, index) => { %>
+        <img
+          src="<%= img.url %>"
+          class="card-img-top show-img mb-2"
+          alt="Listing image <%= index + 1 %>"
+        />
+      <% }) %>
+    <% } else { %>
+      <img
+        src="/images/placeholder.jpg"
+        class="card-img-top show-img"
+        alt="No image available"
+      />
+    <% } %>
 
     <div class="card-body">
       <p class="card-text">
 
-        <!-- DESCRIPTION SAFE -->
         <%= listing.description || "No description provided" %>
         <br /><br />
 
-        <!-- PRICE SAFE (NO CRASH) -->
         <b>
           <% if (listing.price !== undefined && listing.price !== null && listing.price !== "") { %>
             ₹ <%= Number(listing.price).toLocaleString("en-IN") %>
@@ -31,7 +40,6 @@
         </b>
         <br />
 
-        <!-- LOCATION / COUNTRY SAFE -->
         <b>Location:</b> <%= listing.location || "N/A" %><br />
         <b>Country:</b> <%= listing.country || "N/A" %><br />
 

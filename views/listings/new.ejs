@@ -34,17 +34,19 @@
       </div>
 
       <!-- 🔴 IMAGE INPUT CHANGE -->
-      <div class="mb-3">
-        <label class="form-label">Upload Image</label>
-        <input
-          type="file"
-          name="image"
-          class="form-control"
-          accept="image/*"
-          required
-        >
-        <div class="invalid-feedback">Please upload an image</div>
-      </div>
+    <div class="mb-3">
+  <label class="form-label">Upload Images</label>
+  <input
+    type="file"
+    name="listing[images]"
+    class="form-control"
+    accept="image/*"
+    multiple
+    required
+  >
+  <div class="invalid-feedback">Please upload at least one image</div>
+</div>
+
 
       <div class="row">
         <div class="mb-3 col-md-4">

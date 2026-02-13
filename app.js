@@ -162,7 +162,7 @@ app.get("/listings/new", isLoggedIn, (req, res) => {
 app.post(
   "/listings",
   isLoggedIn,
-  upload.single("image"),
+  upload.array("listing[images]", 5), // 🔥 changed here
   async (req, res) => {
     try {
 
@@ -180,16 +180,16 @@ app.post(
         });
       }
 
-      // ✅ FIRST create listing
+      // ✅ Create listing first
       const listing = new Listing(req.body.listing);
       listing.owner = req.session.userId;
 
-      // ✅ THEN assign image
-      if (req.file) {
-        listing.image = {
-          url: req.file.path,
-          filename: req.file.filename,
-        };
+      // 🔥 Assign multiple images
+      if (req.files && req.files.length > 0) {
+        listing.images = req.files.map(file => ({
+          url: file.path,
+          filename: file.filename,
+        }));
       }
 
       await listing.save();
@@ -201,6 +201,7 @@ app.post(
     }
   }
 );
+
 
 
 // SHOW
@@ -227,12 +228,11 @@ app.get("/listings/:id/edit", isLoggedIn, async (req, res) => {
 
   res.render("listings/edit", { listing });
 });
-
 // UPDATE
 app.put(
   "/listings/:id",
   isLoggedIn,
-  upload.single("image"),
+  upload.array("listing[images]", 5),  // 🔥 changed
   async (req, res) => {
 
     const listing = await Listing.findById(req.params.id);
@@ -242,26 +242,26 @@ app.put(
       return res.redirect(`/listings/${listing._id}`);
     }
 
-    // 🔥 Safe update
+    // ✅ Safe body update
     if (req.body && req.body.listing) {
       Object.assign(listing, req.body.listing);
     }
 
-    // 🔥 Image update only if new file uploaded
-    if (req.file) {
-      listing.image = {
-        url: req.file.path,
-        filename: req.file.filename
-      };
+    // 🔥 Add new images if uploaded
+    if (req.files && req.files.length > 0) {
+      const newImages = req.files.map(file => ({
+        url: file.path,
+        filename: file.filename
+      }));
+
+      // Push new images instead of replacing old ones
+      listing.images.push(...newImages);
     }
 
     await listing.save();
     res.redirect(`/listings/${listing._id}`);
   }
 );
-
-
-
 // DELETE
 app.delete("/listings/:id", isLoggedIn, async (req, res) => {
   const listing = await Listing.findById(req.params.id);

@@ -14,15 +14,18 @@ const listingSchema = new Schema({
     trim: true
   },
 
-  image: {
+ images: [
+  {
     url: {
       type: String,
+      required: true
     },
     filename: {
       type: String,
       required: true
     }
-  },
+  }
+],
 
   price: {
     type: Number,
