@@ -1,108 +1,126 @@
-<% layout('/layouts/boilerplate') %>
+<% layout("/layouts/boilerplate") %>
 
-<div class="row mt-3">
+<div class="row mt-4">
   <div class="col-8 offset-2">
-    <form
-      action="/listings/<%= listing._id %>?_method=PUT"
-      method="POST"
+
+    <h2>Edit Listing</h2>
+
+    <form 
+      action="/listings/<%= listing._id %>?_method=PUT" 
+      method="POST" 
       enctype="multipart/form-data"
-      novalidate
-      class="needs-validation"
     >
-      <h2>Edit your List:</h2>
 
+      <!-- TITLE -->
       <div class="mb-3">
-        <label class="form-label">Enter Title</label>
-        <input
-          type="text"
-          name="listing[title]"
+        <label class="form-label">Title</label>
+        <input 
+          type="text" 
+          name="listing[title]" 
           class="form-control"
-          value="<%= listing.title %>"
+          value="<%= listing.title %>" 
           required
-        />
-        <div class="invalid-feedback">Please enter valid title</div>
+        >
       </div>
 
+      <!-- DESCRIPTION -->
       <div class="mb-3">
-        <label class="form-label">Enter Description</label>
-        <input
-          type="text"
-          name="listing[description]"
-          class="form-control"
-          value="<%= listing.description %>"
+        <label class="form-label">Description</label>
+        <textarea 
+          name="listing[description]" 
+          rows="4" 
+          class="form-control" 
           required
-        />
-        <div class="invalid-feedback">Please enter valid description</div>
+        ><%= listing.description %></textarea>
       </div>
 
-      <!-- 🔴 IMAGE FIELD UPDATED FOR CLOUDINARY -->
-     <div class="mb-3">
-  <label class="form-label">Add More Images</label>
-  <input
-    type="file"
-    name="listing[images]"
-    class="form-control"
-    accept="image/*"
-    multiple
-  />
-  <small class="text-muted">
-    Leave empty to keep existing images
-  </small>
-</div>
+      <!-- PRICE -->
+      <div class="mb-3">
+        <label class="form-label">Price</label>
+        <input 
+          type="number" 
+          name="listing[price]" 
+          class="form-control"
+          value="<%= listing.price %>" 
+          required
+        >
+      </div>
 
+      <!-- LOCATION -->
+      <div class="mb-3">
+        <label class="form-label">Location</label>
+        <input 
+          type="text" 
+          name="listing[location]" 
+          class="form-control"
+          value="<%= listing.location %>" 
+          required
+        >
+      </div>
 
-      <!-- 🔴 CURRENT IMAGE PREVIEW (OPTIONAL BUT GOOD UX) -->
-      <% if (listing.image && listing.image.url) { %>
+      <!-- COUNTRY -->
+      <div class="mb-3">
+        <label class="form-label">Country</label>
+        <input 
+          type="text" 
+          name="listing[country]" 
+          class="form-control"
+          value="<%= listing.country %>" 
+          required
+        >
+      </div>
+
+      <!-- ================= EXISTING IMAGES ================= -->
+      <% if (listing.images && listing.images.length > 0) { %>
         <div class="mb-3">
-          <img
-            src="<%= listing.image.url %>"
-            class="img-fluid rounded"
-            style="max-height: 200px;"
-          />
+          <label class="form-label">Existing Images</label>
+
+          <div class="row">
+            <% listing.images.forEach((img) => { %>
+              <div class="col-md-4 mb-3 text-center">
+                <img 
+                  src="<%= img.url %>" 
+                  class="img-thumbnail mb-2"
+                  style="height:150px; object-fit:cover;"
+                />
+
+                <div class="form-check">
+                  <input 
+                    type="checkbox" 
+                    name="deleteImages" 
+                    value="<%= img.filename %>"
+                    class="form-check-input"
+                  >
+                  <label class="form-check-label">
+                    Delete
+                  </label>
+                </div>
+              </div>
+            <% }) %>
+          </div>
         </div>
       <% } %>
 
-      <div class="row">
-        <div class="mb-3 col-md-4">
-          <label class="form-label">Enter Price</label>
-          <input
-            type="number"
-            name="listing[price]"
-            class="form-control"
-            value="<%= listing.price %>"
-            required
-          />
-          <div class="invalid-feedback">Please enter valid price</div>
-        </div>
-
-        <div class="mb-3 col-md-8">
-          <label class="form-label">Enter Location</label>
-          <input
-            type="text"
-            name="listing[location]"
-            class="form-control"
-            value="<%= listing.location %>"
-            required
-          />
-          <div class="invalid-feedback">Please enter valid location</div>
-        </div>
-      </div>
-
+      <!-- ================= ADD NEW IMAGES ================= -->
       <div class="mb-3">
-        <label class="form-label">Enter Country</label>
+        <label class="form-label">Add More Images</label>
         <input
-          type="text"
-          name="listing[country]"
+          type="file"
+          name="listing[images]"
           class="form-control"
-          value="<%= listing.country %>"
-          required
+          accept="image/*"
+          multiple
         />
-        <div class="invalid-feedback">Please enter valid country</div>
+        <small class="text-muted">
+          Leave empty to keep existing images
+        </small>
       </div>
 
-      <button type="submit" class="btn btn-dark edit-btn mt-3 mb-3">
-        Done
-      </button>
+      <!-- SUBMIT -->
+      <button class="btn btn-primary">Update Listing</button>
+      <a href="/listings/<%= listing._id %>" class="btn btn-secondary">Cancel</a>
+
     </form>
+
   </div>
 </div>

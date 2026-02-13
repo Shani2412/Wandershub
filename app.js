@@ -1,7 +1,9 @@
 require("dotenv").config();
+const { cloudinary } = require("./utils/cloudinary");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+
 
 // prevent populate errors
 mongoose.set("strictPopulate", false);
@@ -220,6 +222,7 @@ app.get("/listings/:id", async (req, res) => {
 // EDIT
 app.get("/listings/:id/edit", isLoggedIn, async (req, res) => {
   const listing = await Listing.findById(req.params.id);
+
   if (!listing || listing.isSold) return res.redirect("/listings");
 
   if (!listing.owner.equals(req.session.userId)) {
@@ -228,13 +231,70 @@ app.get("/listings/:id/edit", isLoggedIn, async (req, res) => {
 
   res.render("listings/edit", { listing });
 });
+
+
 // UPDATE
 app.put(
   "/listings/:id",
   isLoggedIn,
-  upload.array("listing[images]", 5),  // 🔥 changed
+  upload.array("listing[images]", 5),
   async (req, res) => {
+    try {
 
+      const listing = await Listing.findById(req.params.id);
+      if (!listing || listing.isSold) return res.redirect("/listings");
+
+      if (!listing.owner.equals(req.session.userId)) {
+        return res.redirect(`/listings/${listing._id}`);
+      }
+
+      // ✅ Safe body update
+      if (req.body && req.body.listing) {
+        Object.assign(listing, req.body.listing);
+      }
+
+      // 🔥 DELETE SELECTED IMAGES
+      if (req.body.deleteImages) {
+
+        // Ensure it's always an array
+        const imagesToDelete = Array.isArray(req.body.deleteImages)
+          ? req.body.deleteImages
+          : [req.body.deleteImages];
+
+        // Delete from Cloudinary
+        for (let filename of imagesToDelete) {
+          await cloudinary.uploader.destroy(filename);
+        }
+
+        // Remove from database
+        listing.images = listing.images.filter(
+          img => !imagesToDelete.includes(img.filename)
+        );
+      }
+
+      // 🔥 ADD NEW IMAGES
+      if (req.files && req.files.length > 0) {
+        const newImages = req.files.map(file => ({
+          url: file.path,
+          filename: file.filename
+        }));
+
+        listing.images.push(...newImages);
+      }
+
+      await listing.save();
+      res.redirect(`/listings/${listing._id}`);
+
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    }
+  }
+);
+
+// DELETE
+app.delete("/listings/:id", isLoggedIn, async (req, res) => {
+  try {
     const listing = await Listing.findById(req.params.id);
     if (!listing || listing.isSold) return res.redirect("/listings");
 
@@ -242,37 +302,18 @@ app.put(
       return res.redirect(`/listings/${listing._id}`);
     }
 
-    // ✅ Safe body update
-    if (req.body && req.body.listing) {
-      Object.assign(listing, req.body.listing);
+    // 🔥 Delete all images from Cloudinary
+    for (let img of listing.images) {
+      await cloudinary.uploader.destroy(img.filename);
     }
 
-    // 🔥 Add new images if uploaded
-    if (req.files && req.files.length > 0) {
-      const newImages = req.files.map(file => ({
-        url: file.path,
-        filename: file.filename
-      }));
+    await Listing.findByIdAndDelete(req.params.id);
 
-      // Push new images instead of replacing old ones
-      listing.images.push(...newImages);
-    }
-
-    await listing.save();
-    res.redirect(`/listings/${listing._id}`);
+    res.redirect("/listings");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting listing");
   }
-);
-// DELETE
-app.delete("/listings/:id", isLoggedIn, async (req, res) => {
-  const listing = await Listing.findById(req.params.id);
-  if (!listing || listing.isSold) return res.redirect("/listings");
-
-  if (!listing.owner.equals(req.session.userId)) {
-    return res.redirect(`/listings/${listing._id}`);
-  }
-
-  await Listing.findByIdAndDelete(req.params.id);
-  res.redirect("/listings");
 });
 
 /* ================= BUY FLOW ================= */
