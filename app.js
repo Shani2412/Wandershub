@@ -165,47 +165,42 @@ app.post(
   upload.single("image"),
   async (req, res) => {
     try {
+
+      if (!req.body.listing) {
+        return res.render("listings/new", {
+          error: "Invalid form submission",
+        });
+      }
+
       const { title, description, price, location, country } = req.body.listing;
 
-      // SERVER VALIDATION (NO STATUS CODE)
       if (!title || !description || !price || !location || !country) {
         return res.render("listings/new", {
           error: "All fields are mandatory",
         });
       }
 
-     if (req.file) {
-  listing.image = {
-    url: req.file.path,
-    filename: req.file.filename
-  };
-}
-
-
+      // ✅ FIRST create listing
       const listing = new Listing(req.body.listing);
       listing.owner = req.session.userId;
 
+      // ✅ THEN assign image
       if (req.file) {
-  listing.image = {
-    url: req.file.path,
-    filename: req.file.filename
-  };
-}
+        listing.image = {
+          url: req.file.path,
+          filename: req.file.filename,
+        };
+      }
 
-
-      listing.purchaseRequest = null;
       await listing.save();
-
       res.redirect(`/listings/${listing._id}`);
+
     } catch (err) {
       console.error(err);
       res.status(500).send("Internal Server Error");
     }
   }
 );
-
-
-
 
 
 // SHOW
@@ -408,3 +403,4 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
