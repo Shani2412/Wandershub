@@ -8,23 +8,61 @@
 
   <div class="card col-6 offset-3 show-card <%= listing.isSold ? 'sold' : '' %>">
 
-    <!-- ✅ MULTIPLE IMAGES SUPPORT -->
+    <!-- ================= IMAGE CAROUSEL ================= -->
     <% if (listing.images && listing.images.length > 0) { %>
-      <% listing.images.forEach((img, index) => { %>
-        <img
-          src="<%= img.url %>"
-          class="card-img-top show-img mb-2"
-          alt="Listing image <%= index + 1 %>"
-        />
-      <% }) %>
+
+      <div id="listingCarousel" class="carousel slide" data-bs-ride="carousel">
+
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+          <% listing.images.forEach((img, index) => { %>
+            <button
+              type="button"
+              data-bs-target="#listingCarousel"
+              data-bs-slide-to="<%= index %>"
+              class="<%= index === 0 ? 'active' : '' %>"
+              aria-current="<%= index === 0 ? 'true' : 'false' %>">
+            </button>
+          <% }) %>
+        </div>
+
+        <!-- Slides -->
+        <div class="carousel-inner">
+          <% listing.images.forEach((img, index) => { %>
+            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+              <img
+                src="<%= img.url %>"
+                class="d-block w-100"
+                style="height: 400px; object-fit: cover;"
+                alt="Listing image <%= index + 1 %>"
+              >
+            </div>
+          <% }) %>
+        </div>
+
+        <!-- Previous -->
+        <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+
+        <!-- Next -->
+        <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+
+      </div>
+
     <% } else { %>
+
       <img
         src="/images/placeholder.jpg"
         class="card-img-top show-img"
         alt="No image available"
       />
+
     <% } %>
 
+    <!-- ================= CARD BODY ================= -->
     <div class="card-body">
       <p class="card-text">
 
