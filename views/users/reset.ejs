@@ -1,0 +1,68 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="container d-flex justify-content-center align-items-center" style="min-height:75vh;">
+  
+  <div class="card shadow-lg border-0 p-4" 
+       style="width:100%; max-width:450px; border-radius:18px;">
+
+    <div class="text-center mb-4">
+      <h3 class="fw-bold">Reset Your Password</h3>
+      <p class="text-muted small">
+        Enter your new password below.
+      </p>
+    </div>
+
+    <form method="POST" class="needs-validation" novalidate>
+
+      <div class="mb-3">
+        <label class="form-label fw-semibold">New Password</label>
+
+        <div class="input-group">
+          <input 
+            type="password" 
+            name="password" 
+            id="password"
+            class="form-control"
+            placeholder="Enter new password"
+            minlength="6"
+            required
+          >
+          <button 
+            class="btn btn-outline-secondary" 
+            type="button"
+            onclick="togglePassword()">
+            Show
+          </button>
+        </div>
+
+        <div class="invalid-feedback">
+          Password must be at least 6 characters.
+        </div>
+      </div>
+
+      <div class="d-grid mt-4">
+        <button class="btn btn-primary btn-lg fw-semibold shadow-sm">
+          Update Password
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<script>
+function togglePassword() {
+  const input = document.getElementById("password");
+  const btn = event.target;
+
+  if (input.type === "password") {
+    input.type = "text";
+    btn.textContent = "Hide";
+  } else {
+    input.type = "password";
+    btn.textContent = "Show";
+  }
+}
+</script>

@@ -4,23 +4,40 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    trim: true
   },
+
   email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    lowercase: true,
+    trim: true
   },
+
   password: {
     type: String,
     required: true
-  },role: {
-  type: String,
-  enum: ["buyer", "seller"],
-  default: "buyer"
-}
+  },
 
+  role: {
+    type: String,
+    enum: ["buyer", "seller"],
+    default: "buyer"
+  },
 
-});
+  // Forgot password fields
+  resetPasswordToken: {
+    type: String,
+    default: undefined
+  },
+
+  resetPasswordExpires: {
+    type: Date,
+    default: undefined
+  }
+
+}, { timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);

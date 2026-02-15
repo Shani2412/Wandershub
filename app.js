@@ -3,9 +3,8 @@ const { cloudinary } = require("./utils/cloudinary");
 const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
+const crypto = require("crypto");
 
-
-// prevent populate errors
 mongoose.set("strictPopulate", false);
 
 const path = require("path");
@@ -17,21 +16,23 @@ const session = require("express-session");
 const Listing = require("./models/listing");
 const Review = require("./models/review");
 const User = require("./models/user");
+
 const multer = require("multer");
 const { storage } = require("./utils/cloudinary");
 const upload = multer({
   storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB (mobile safe)
+  limits: { fileSize: 5 * 1024 * 1024 },
 });
 
-
 /* ================= DATABASE ================= */
+
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("DB Connected"))
   .catch((err) => console.log("DB Error:", err.message));
 
 /* ================= SESSION ================= */
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "wanderahub-secret",
@@ -41,6 +42,7 @@ app.use(
 );
 
 /* ================= APP CONFIG ================= */
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.engine("ejs", ejsMate);
@@ -49,7 +51,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
 app.use(express.static(path.join(__dirname, "public")));
 
-/* ================= GLOBAL USER + ROLE AWARENESS ================= */
+/* ================= GLOBAL USER ================= */
+
 app.use(async (req, res, next) => {
   res.locals.currentUser = null;
   res.locals.isSeller = false;
@@ -58,16 +61,13 @@ app.use(async (req, res, next) => {
   if (!req.session.userId) return next();
 
   const user = await User.findById(req.session.userId);
-
-  // 🔴 MOST IMPORTANT GUARD
   if (!user) {
-    req.session.destroy(); // stale / invalid session clear
+    req.session.destroy();
     return next();
   }
 
   res.locals.currentUser = user;
 
-  // REAL SELLER CHECK = USER OWNS AT LEAST ONE LISTING
   const ownsListing = await Listing.exists({ owner: user._id });
   res.locals.isSeller = !!ownsListing;
 
@@ -83,8 +83,8 @@ app.use(async (req, res, next) => {
   next();
 });
 
+/* ================= MIDDLEWARE ================= */
 
-/* ================= AUTH MIDDLEWARE ================= */
 function isLoggedIn(req, res, next) {
   if (!req.session.userId) return res.redirect("/login");
   next();
@@ -105,8 +105,12 @@ app.get("/login", (req, res) => {
 });
 
 app.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const email = req.body.email.trim();
+  const password = req.body.password;
+
+  const user = await User.findOne({
+    email: { $regex: new RegExp("^" + email + "$", "i") },
+  });
 
   if (!user) {
     return res.render("login", { error: "Invalid email or password" });
@@ -126,9 +130,14 @@ app.get("/signup", (req, res) => {
 });
 
 app.post("/signup", async (req, res) => {
-  const { username, email, password } = req.body;
+  const username = req.body.username.trim();
+  const email = req.body.email.trim();
+  const password = req.body.password;
 
-  const exists = await User.findOne({ email });
+  const exists = await User.findOne({
+    email: { $regex: new RegExp("^" + email + "$", "i") },
+  });
+
   if (exists) {
     return res.render("users/signup", {
       error: "Email already registered",
@@ -147,48 +156,107 @@ app.get("/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login"));
 });
 
+/* ================= FORGOT PASSWORD ================= */
+
+app.get("/forgot", (req, res) => {
+  res.render("users/forgot", { error: null });
+});
+
+app.post("/forgot", async (req, res) => {
+  try {
+    const email = req.body.email.trim();
+
+    const user = await User.findOne({
+      email: { $regex: new RegExp("^" + email + "$", "i") },
+    });
+
+    if (!user) {
+      return res.render("users/forgot", {
+        error: "No account with that email",
+      });
+    }
+
+    const token = crypto.randomBytes(32).toString("hex");
+
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000;
+
+    await user.save();
+
+    console.log("RESET TOKEN:", token);
+
+    res.render("users/forgot-success", {
+      link: `http://localhost:8080/reset/${token}`
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong");
+  }
+});
+
+app.get("/reset/:token", async (req, res) => {
+  const user = await User.findOne({
+    resetPasswordToken: req.params.token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.send("Token invalid or expired");
+  }
+
+  res.render("users/reset");
+});
+
+app.post("/reset/:token", async (req, res) => {
+  const user = await User.findOne({
+    resetPasswordToken: req.params.token,
+    resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.send("Token invalid or expired");
+  }
+
+  const hashedPassword = await bcrypt.hash(req.body.password, 12);
+
+  user.password = hashedPassword;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+
+  await user.save();
+
+  res.redirect("/login");
+});
+
 /* ================= LISTINGS ================= */
 
-// INDEX
 app.get("/listings", async (req, res) => {
   const allListings = await Listing.find({ isSold: false });
   res.render("listings/index", { allListings });
 });
 
-// NEW
 app.get("/listings/new", isLoggedIn, (req, res) => {
   res.render("listings/new");
 });
 
-// CREATE
 app.post(
   "/listings",
   isLoggedIn,
-  upload.array("listing[images]", 5), // 🔥 changed here
+  upload.array("listing[images]", 5),
   async (req, res) => {
     try {
-
       if (!req.body.listing) {
         return res.render("listings/new", {
           error: "Invalid form submission",
         });
       }
 
-      const { title, description, price, location, country } = req.body.listing;
-
-      if (!title || !description || !price || !location || !country) {
-        return res.render("listings/new", {
-          error: "All fields are mandatory",
-        });
-      }
-
-      // ✅ Create listing first
       const listing = new Listing(req.body.listing);
       listing.owner = req.session.userId;
 
-      // 🔥 Assign multiple images
       if (req.files && req.files.length > 0) {
-        listing.images = req.files.map(file => ({
+        listing.images = req.files.map((file) => ({
           url: file.path,
           filename: file.filename,
         }));
@@ -196,7 +264,6 @@ app.post(
 
       await listing.save();
       res.redirect(`/listings/${listing._id}`);
-
     } catch (err) {
       console.error(err);
       res.status(500).send("Internal Server Error");
@@ -204,9 +271,6 @@ app.post(
   }
 );
 
-
-
-// SHOW
 app.get("/listings/:id", async (req, res) => {
   const listing = await Listing.findById(req.params.id)
     .populate("owner")
@@ -219,72 +283,53 @@ app.get("/listings/:id", async (req, res) => {
   res.render("listings/show", { listing });
 });
 
-// EDIT
 app.get("/listings/:id/edit", isLoggedIn, async (req, res) => {
   const listing = await Listing.findById(req.params.id);
 
   if (!listing || listing.isSold) return res.redirect("/listings");
-
-  if (!listing.owner.equals(req.session.userId)) {
+  if (!listing.owner.equals(req.session.userId))
     return res.redirect(`/listings/${listing._id}`);
-  }
 
   res.render("listings/edit", { listing });
 });
 
-
-// UPDATE
 app.put(
   "/listings/:id",
   isLoggedIn,
   upload.array("listing[images]", 5),
   async (req, res) => {
     try {
-
       const listing = await Listing.findById(req.params.id);
       if (!listing || listing.isSold) return res.redirect("/listings");
-
-      if (!listing.owner.equals(req.session.userId)) {
+      if (!listing.owner.equals(req.session.userId))
         return res.redirect(`/listings/${listing._id}`);
-      }
 
-      // ✅ Safe body update
-      if (req.body && req.body.listing) {
-        Object.assign(listing, req.body.listing);
-      }
+      if (req.body.listing) Object.assign(listing, req.body.listing);
 
-      // 🔥 DELETE SELECTED IMAGES
       if (req.body.deleteImages) {
-
-        // Ensure it's always an array
         const imagesToDelete = Array.isArray(req.body.deleteImages)
           ? req.body.deleteImages
           : [req.body.deleteImages];
 
-        // Delete from Cloudinary
         for (let filename of imagesToDelete) {
           await cloudinary.uploader.destroy(filename);
         }
 
-        // Remove from database
         listing.images = listing.images.filter(
-          img => !imagesToDelete.includes(img.filename)
+          (img) => !imagesToDelete.includes(img.filename)
         );
       }
 
-      // 🔥 ADD NEW IMAGES
       if (req.files && req.files.length > 0) {
-        const newImages = req.files.map(file => ({
+        const newImages = req.files.map((file) => ({
           url: file.path,
-          filename: file.filename
+          filename: file.filename,
         }));
-
         listing.images.push(...newImages);
       }
 
       await listing.save();
       res.redirect(`/listings/${listing._id}`);
-
     } catch (err) {
       console.error(err);
       res.status(500).send("Internal Server Error");
@@ -292,23 +337,18 @@ app.put(
   }
 );
 
-// DELETE
 app.delete("/listings/:id", isLoggedIn, async (req, res) => {
   try {
     const listing = await Listing.findById(req.params.id);
     if (!listing || listing.isSold) return res.redirect("/listings");
-
-    if (!listing.owner.equals(req.session.userId)) {
+    if (!listing.owner.equals(req.session.userId))
       return res.redirect(`/listings/${listing._id}`);
-    }
 
-    // 🔥 Delete all images from Cloudinary
     for (let img of listing.images) {
       await cloudinary.uploader.destroy(img.filename);
     }
 
     await Listing.findByIdAndDelete(req.params.id);
-
     res.redirect("/listings");
   } catch (err) {
     console.error(err);
@@ -321,10 +361,8 @@ app.delete("/listings/:id", isLoggedIn, async (req, res) => {
 app.get("/listings/:id/buy", isLoggedIn, async (req, res) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing || listing.isSold) return res.redirect("/listings");
-
-  if (listing.owner.equals(req.session.userId)) {
+  if (listing.owner.equals(req.session.userId))
     return res.redirect(`/listings/${listing._id}`);
-  }
 
   res.render("listings/buy", { listing });
 });
@@ -344,7 +382,7 @@ app.post("/listings/:id/buy", isLoggedIn, async (req, res) => {
   res.redirect(`/listings/${listing._id}`);
 });
 
-/* ================= SELLER REQUESTS ================= */
+/* ================= SELLER ================= */
 
 app.get("/seller/requests", isSeller, async (req, res) => {
   await Listing.updateMany(
@@ -364,7 +402,6 @@ app.get("/seller/requests", isSeller, async (req, res) => {
   res.render("seller/requests", { listings });
 });
 
-// APPROVE
 app.post("/listings/:id/approve", isSeller, async (req, res) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing) return res.redirect("/seller/requests");
@@ -379,7 +416,6 @@ app.post("/listings/:id/approve", isSeller, async (req, res) => {
   res.redirect("/seller/requests");
 });
 
-// DECLINE
 app.post("/listings/:id/decline", isSeller, async (req, res) => {
   const listing = await Listing.findById(req.params.id);
   if (!listing) return res.redirect("/seller/requests");
@@ -421,9 +457,8 @@ app.delete(
     const isListingOwner =
       listing.owner && listing.owner.equals(req.session.userId);
 
-    if (!isReviewAuthor && !isListingOwner) {
+    if (!isReviewAuthor && !isListingOwner)
       return res.redirect("back");
-    }
 
     await Listing.findByIdAndUpdate(id, {
       $pull: { reviews: reviewId },
@@ -435,13 +470,14 @@ app.delete(
 );
 
 /* ================= 404 ================= */
+
 app.use((req, res) => {
   res.status(404).send("Page not found");
 });
 
 /* ================= SERVER ================= */
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
