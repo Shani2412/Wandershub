@@ -191,6 +191,7 @@ res.render("users/forgot-success", {
     console.error(err);
     res.status(500).send("Internal Server Error");
   }
+});
 
 app.get("/reset/:token", async (req, res) => {
   const user = await User.findOne({
