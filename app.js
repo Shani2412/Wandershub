@@ -175,25 +175,22 @@ app.post("/forgot", async (req, res) => {
         error: "No account with that email",
       });
     }
+const token = crypto.randomBytes(32).toString("hex");
 
-    const token = crypto.randomBytes(32).toString("hex");
+user.resetPasswordToken = token;
+user.resetPasswordExpires = Date.now() + 3600000;
 
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000;
+await user.save();
 
-    await user.save();
+const resetUrl = `${process.env.BASE_URL}/reset/${token}`;
 
-    console.log("RESET TOKEN:", token);
-
-    res.render("users/forgot-success", {
-      link: `http://localhost:8080/reset/${token}`
-    });
-
+res.render("users/forgot-success", {
+  link: resetUrl
+});
   } catch (err) {
     console.error(err);
-    res.status(500).send("Something went wrong");
+    res.status(500).send("Internal Server Error");
   }
-});
 
 app.get("/reset/:token", async (req, res) => {
   const user = await User.findOne({
