@@ -1,46 +1,59 @@
 <% layout('/layouts/boilerplate') %>
 
-<h1>All Listings</h1>
+<h1 class="mb-4">All Listings</h1>
 
-<div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-1 g-3">
+<div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-1 g-4">
   <% for (let listing of allListings) { %>
-    <a
-      href="/listings/<%= listing._id %>"
-      class="listing-link"
-      style="text-decoration: none"
-    >
-      <div class="card col">
 
-        <% 
-          let imgUrl = '/images/placeholder.jpg';
-          if (listing.images && listing.images.length > 0) {
-            imgUrl = listing.images[0].url;
-          }
-        %>
+    <div class="col">
+      <a 
+        href="/listings/<%= listing._id %>" 
+        class="listing-link text-decoration-none text-dark"
+      >
+        <div class="card h-100 shadow-sm">
 
-        <img
-          src="<%= imgUrl %>"
-          class="card-img-top"
-          alt="<%= listing.title %>"
-          style="height: 20rem; object-fit: cover;"
-        />
+          <% 
+            let imgUrl = '/images/placeholder.jpg';
+            if (listing.images && listing.images.length > 0) {
+              imgUrl = listing.images[0].url;
+            }
+          %>
 
-        <div class="card-img-overlay"></div>
+          <img
+            src="<%= imgUrl %>"
+            class="card-img-top"
+            alt="<%= listing.title %>"
+            style="height: 18rem; object-fit: cover;"
+          />
 
-        <div class="card-body">
-          <p class="card-text">
-            <b><%= listing.title %></b><br />
+          <div class="card-body">
 
-            <% if (listing.price != null) { %>
-              &#8377;<%= listing.price.toLocaleString('en-IN') %>
-            <% } else { %>
-              Price not available
+            <!-- Title -->
+            <h5 class="card-title mb-2">
+              <%= listing.title %>
+            </h5>
+
+            <!-- Price -->
+            <p class="fw-bold mb-1">
+              <% if (listing.price != null) { %>
+                ₹<%= listing.price.toLocaleString('en-IN') %>
+              <% } else { %>
+                Price not available
+              <% } %>
+            </p>
+
+            <!-- Location -->
+            <% if (listing.location && listing.country) { %>
+              <p class="text-muted mb-0">
+                <%= listing.location %>, <%= listing.country %>
+              </p>
             <% } %>
-          </p>
-        </div>
 
-      </div>
-    </a>
+          </div>
+
+        </div>
+      </a>
+    </div>
+
   <% } %>
 </div>
-

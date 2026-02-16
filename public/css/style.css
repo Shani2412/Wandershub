@@ -7,6 +7,10 @@ body {
   background-color: #f4f6f9;
   color: #333;
 }
+h1{
+   font-weight: 600;
+  margin-bottom: 30px;
+}
 
 /* ===============================
    LINKS
@@ -30,11 +34,17 @@ a:hover {
 }
 
 .card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-8px);
+   box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
 .card.shadow-lg {
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
+}
+
+.card-title{
+    font-weight: 600;
+  font-size: 1.1rem;
 }
 
 /* ===============================
