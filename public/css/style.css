@@ -109,9 +109,13 @@ a:hover {
 }
 
 .show-img {
-  height: 320px;
+  width: 100%;
+  height: auto;
+  max-height: 75vh;
   object-fit: cover;
+  border-radius: 18px;
 }
+
 
 .badge-available {
   background-color: #198754;
@@ -225,8 +229,3 @@ footer {
    RESPONSIVE
 ================================ */
 
-@media (max-width: 768px) {
-  .show-img {
-    height: 240px;
-  }
-}

@@ -6,7 +6,8 @@
     <h3><%= listing.title || "No title provided" %></h3>
   </div>
 
-  <div class="card col-6 offset-3 show-card <%= listing.isSold ? 'sold' : '' %>">
+  <div class="card col-12 col-md-8 mx-auto show-card <%= listing.isSold ? 'sold' : '' %>">
+
 
     <!-- ================= IMAGE CAROUSEL ================= -->
     <% if (listing.images && listing.images.length > 0) { %>
