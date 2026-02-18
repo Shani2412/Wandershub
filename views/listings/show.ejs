@@ -1,189 +1,163 @@
 <% layout("layouts/boilerplate") %>
 
-<!-- ================= LISTING DETAILS ================= -->
 <div class="row mt-4">
-  <div class="col-12 col-md-8 mx-auto">
-    <div class="card show-card <%= listing.isSold ? 'sold' : '' %>">
+  <div class="col-12 col-lg-10 mx-auto">
+    <div class="card show-card p-4">
 
-      <!-- Title -->
-      <div class="card-body pb-0">
-        <h3 class="fw-bold mb-3 text-center text-md-start">
-          <%= listing.title || "No title provided" %>
-        </h3>
-      </div>
+      <div class="row g-4">
 
+        <!-- IMAGE COLUMN -->
+        <div class="col-12 col-md-6">
 
+          <% if (listing.images && listing.images.length > 0) { %>
 
-  <div class="card col-12 col-md-8 mx-auto show-card <%= listing.isSold ? 'sold' : '' %>">
+            <div id="listingCarousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-inner">
+                <% listing.images.forEach((img, index) => { %>
+                  <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
+                    <img 
+                      src="<%= img.url %>"
+                      class="d-block w-100 rounded"
+                      style="height: 450px; object-fit: cover;"
+                      alt="Listing image <%= index + 1 %>"
+                    >
+                  </div>
+                <% }) %>
+              </div>
 
+              <button class="carousel-control-prev" type="button"
+                data-bs-target="#listingCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
 
-    <!-- ================= IMAGE CAROUSEL ================= -->
-    <% if (listing.images && listing.images.length > 0) { %>
-
-      <div id="listingCarousel" class="carousel slide" data-bs-ride="carousel">
-
-        <!-- Indicators -->
-        <div class="carousel-indicators">
-          <% listing.images.forEach((img, index) => { %>
-            <button
-              type="button"
-              data-bs-target="#listingCarousel"
-              data-bs-slide-to="<%= index %>"
-              class="<%= index === 0 ? 'active' : '' %>"
-              aria-current="<%= index === 0 ? 'true' : 'false' %>">
-            </button>
-          <% }) %>
-        </div>
-
-        <!-- Slides -->
-        <div class="carousel-inner">
-          <% listing.images.forEach((img, index) => { %>
-            <div class="carousel-item <%= index === 0 ? 'active' : '' %>">
-              <img
-                src="<%= img.url %>"
-                class="d-block w-100"
-                style="height: 400px; object-fit: cover;"
-                alt="Listing image <%= index + 1 %>"
-              >
+              <button class="carousel-control-next" type="button"
+                data-bs-target="#listingCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
             </div>
-          <% }) %>
+
+          <% } else { %>
+
+            <img 
+              src="/images/placeholder.jpg"
+              class="img-fluid w-100 rounded"
+              style="height: 450px; object-fit: cover;"
+              alt="No image available"
+            />
+
+          <% } %>
+
         </div>
 
-        <!-- Previous -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
-          <span class="carousel-control-prev-icon"></span>
-        </button>
+        <!-- DETAILS COLUMN -->
+        <div class="col-12 col-md-6">
 
-        <!-- Next -->
-        <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
-          <span class="carousel-control-next-icon"></span>
-        </button>
+          <h2 class="fw-bold mb-3">
+            <%= listing.title || "No title provided" %>
+          </h2>
 
-      </div>
+          <h4 class="text-success mb-3">
+            <% if (listing.price !== undefined && listing.price !== null && listing.price !== "") { %>
+              ₹ <%= Number(listing.price).toLocaleString("en-IN") %>
+            <% } else { %>
+              Price not available
+            <% } %>
+          </h4>
 
-    <% } else { %>
+          <p class="text-muted mb-2">
+            <b>Location:</b> <%= listing.location || "N/A" %>
+          </p>
 
-      <img
-        src="/images/placeholder.jpg"
-        class="card-img-top show-img"
-        alt="No image available"
-      />
+          <p class="text-muted mb-3">
+            <b>Country:</b> <%= listing.country || "N/A" %>
+          </p>
 
-    <% } %>
-
-    <!-- ================= CARD BODY ================= -->
-    <div class="card-body">
-      <p class="card-text">
-
-        <%= listing.description || "No description provided" %>
-        <br /><br />
-
-        <b>
-          <% if (listing.price !== undefined && listing.price !== null && listing.price !== "") { %>
-            ₹ <%= Number(listing.price).toLocaleString("en-IN") %>
+          <% if (listing.isSold) { %>
+            <span class="badge bg-danger mb-3">SOLD OUT</span>
           <% } else { %>
-            Price not available
+            <span class="badge bg-success mb-3">AVAILABLE</span>
           <% } %>
-        </b>
-        <br />
 
-        <b>Location:</b> <%= listing.location || "N/A" %><br />
-        <b>Country:</b> <%= listing.country || "N/A" %><br />
+          <hr>
 
-        <% if (listing.isSold) { %>
-          <span class="badge badge-sold">SOLD OUT</span>
-        <% } else { %>
-          <span class="badge badge-available">AVAILABLE</span>
-        <% } %>
+          <p>
+            <%= listing.description || "No description provided" %>
+          </p>
 
-      </p>
-    </div>
-  </div>
-</div>
+          <hr>
 
-<!-- ================= SELLER ALERT ================= -->
-<% if (
-  currentUser &&
-  isSeller &&
-  listing.owner &&
-  listing.owner._id.equals(currentUser._id) &&
-  !listing.isSold &&
-  listing.purchaseRequest &&
-  listing.purchaseRequest.status === "pending"
-) { %>
-  <div class="row mt-3">
-    <div class="col-6 offset-3">
-      <div class="request-info">
-        🔔 You have a pending purchase request.
-        <a href="/seller/requests">Review now</a>
+          <!-- ACTION BUTTONS -->
+          <div class="d-flex flex-wrap gap-2 mt-3">
+
+            <% if (listing.isSold) { %>
+
+              <button class="btn btn-secondary" disabled>SOLD OUT</button>
+
+            <% } else if (
+              currentUser &&
+              listing.owner &&
+              listing.owner._id.equals(currentUser._id)
+            ) { %>
+
+              <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark">
+                Edit
+              </a>
+
+              <form action="/listings/<%= listing._id %>?_method=DELETE"
+                method="POST">
+                <button class="btn btn-danger">Delete</button>
+              </form>
+
+            <% } else { %>
+
+              <% if (
+                currentUser &&
+                listing.purchaseRequest &&
+                listing.purchaseRequest.status === "pending" &&
+                listing.purchaseRequest.buyer &&
+                listing.purchaseRequest.buyer.equals(currentUser._id)
+              ) { %>
+
+                <button class="btn btn-warning" disabled>Request Sent</button>
+
+              <% } else if (currentUser && !listing.purchaseRequest) { %>
+
+                <a href="/listings/<%= listing._id %>/buy"
+                  class="btn btn-success">
+                  BUY NOW
+                </a>
+
+              <% } %>
+
+            <% } %>
+
+            <a href="/listings" class="btn btn-outline-dark">
+              Back
+            </a>
+
+          </div>
+
+        </div>
+
       </div>
     </div>
   </div>
-<% } %>
-
-<!-- ================= ACTION BUTTONS ================= -->
-<div class="btns row mt-3">
-  <div class="col-12 d-flex justify-content-center gap-2">
-
-    <% if (listing.isSold) { %>
-      <button class="btn btn-secondary" disabled>SOLD OUT</button>
-
-    <% } else if (
-      currentUser &&
-      listing.owner &&
-      listing.owner._id.equals(currentUser._id)
-    ) { %>
-
-      <a href="/listings/<%= listing._id %>/edit" class="btn btn-dark">
-        Edit
-      </a>
-
-      <form
-        action="/listings/<%= listing._id %>?_method=DELETE"
-        method="POST"
-        style="display:inline;"
-      >
-        <button class="btn btn-danger">Delete</button>
-      </form>
-
-    <% } else { %>
-
-      <% if (
-        currentUser &&
-        listing.purchaseRequest &&
-        listing.purchaseRequest.status === "pending" &&
-        listing.purchaseRequest.buyer &&
-        listing.purchaseRequest.buyer.equals(currentUser._id)
-      ) { %>
-
-        <button class="btn btn-warning" disabled>Request Sent</button>
-
-      <% } else if (currentUser && !listing.purchaseRequest) { %>
-
-        <a href="/listings/<%= listing._id %>/buy" class="btn btn-success">
-          BUY NOW
-        </a>
-
-      <% } %>
-
-    <% } %>
-
-    <a href="/listings" class="btn btn-dark">Back to Listings</a>
-  </div>
 </div>
 
-<hr class="mt-4">
+<hr class="mt-5">
 
-<!-- ================= REVIEWS ================= -->
+<!-- ================= REVIEWS SECTION ================= -->
 <div class="row">
-  <div class="col-8 offset-2">
-    <h4>Leave a Review</h4>
+  <div class="col-12 col-lg-8 mx-auto">
+
+    <h4 class="mb-3">Leave a Review</h4>
 
     <% if (currentUser) { %>
       <form action="/listings/<%= listing._id %>/reviews" method="POST">
+
         <div class="mb-3">
           <label class="form-label">Rating</label>
-          <input type="hidden" name="review[rating]" id="ratingInput" value="0" required />
+          <input type="hidden" name="review[rating]" id="ratingInput" value="0" required>
 
           <div id="starRating" class="star-rating">
             <span data-value="1">★</span>
@@ -195,8 +169,8 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label">Comment</label>
-          <textarea name="review[comment]" rows="4" class="form-control" required></textarea>
+          <textarea name="review[comment]" rows="4"
+            class="form-control" required></textarea>
         </div>
 
         <button class="btn btn-primary">Submit Review</button>
@@ -208,18 +182,20 @@
     <hr class="mt-4">
 
     <% if (listing.reviews && listing.reviews.length > 0) { %>
-      <h4>Reviews</h4>
 
-      <% for (let review of listing.reviews) { %>
-        <div class="card mb-3">
+      <h4 class="mb-3">Reviews</h4>
+
+      <% listing.reviews.forEach((review) => { %>
+        <div class="card mb-3 shadow-sm">
           <div class="card-body">
+
             <h6 class="mb-1">
               @<%= review.author ? review.author.username : "Deleted User" %>
             </h6>
 
-            <div>
+            <div class="mb-2">
               <% for (let i = 1; i <= 5; i++) { %>
-                <% if (i <= review.rating) { %>⭐<% } else { %>☆<% } %>
+                <% if (i <= review.rating) { %> ⭐ <% } else { %> ☆ <% } %>
               <% } %>
               (<%= review.rating %>/5)
             </div>
@@ -241,28 +217,36 @@
                 <button class="btn btn-sm btn-danger">Delete</button>
               </form>
             <% } %>
+
           </div>
         </div>
-      <% } %>
+      <% }) %>
+
     <% } else { %>
-      <p>No reviews yet.</p>
+      <p class="text-muted mt-3">No reviews yet.</p>
     <% } %>
+
   </div>
 </div>
 
 <script>
-  const stars = document.querySelectorAll("#starRating span");
-  const ratingInput = document.getElementById("ratingInput");
+  document.addEventListener("DOMContentLoaded", function () {
 
-  if (stars && ratingInput) {
+    const stars = document.querySelectorAll("#starRating span");
+    const ratingInput = document.getElementById("ratingInput");
+
+    if (!stars || !ratingInput) return;
+
     stars.forEach((star) => {
-      star.addEventListener("click", () => {
-        const value = star.dataset.value;
+      star.addEventListener("click", function () {
+        const value = this.dataset.value;
         ratingInput.value = value;
-        stars.forEach((s) =>
-          s.classList.toggle("active", s.dataset.value <= value)
-        );
+
+        stars.forEach((s) => {
+          s.classList.toggle("active", s.dataset.value <= value);
+        });
       });
     });
-  }
+
+  });
 </script>

@@ -268,18 +268,22 @@ app.post(
     }
   }
 );
-
+// ------------------------Show----------------------------
 app.get("/listings/:id", async (req, res) => {
   const listing = await Listing.findById(req.params.id)
-    .populate("owner")
     .populate({
       path: "reviews",
-      populate: { path: "author", select: "username" },
-    });
+      populate: {
+        path: "author",
+      },
+    })
+    .populate("owner");
 
   if (!listing) return res.redirect("/listings");
+
   res.render("listings/show", { listing });
 });
+
 
 app.get("/listings/:id/edit", isLoggedIn, async (req, res) => {
   const listing = await Listing.findById(req.params.id);
