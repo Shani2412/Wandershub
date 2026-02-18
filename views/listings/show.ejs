@@ -1,10 +1,18 @@
 <% layout("layouts/boilerplate") %>
 
 <!-- ================= LISTING DETAILS ================= -->
-<div class="row mt-3">
-  <div class="col-8 offset-3">
-    <h3><%= listing.title || "No title provided" %></h3>
-  </div>
+<div class="row mt-4">
+  <div class="col-12 col-md-8 mx-auto">
+    <div class="card show-card <%= listing.isSold ? 'sold' : '' %>">
+
+      <!-- Title -->
+      <div class="card-body pb-0">
+        <h3 class="fw-bold mb-3 text-center text-md-start">
+          <%= listing.title || "No title provided" %>
+        </h3>
+      </div>
+
+
 
   <div class="card col-12 col-md-8 mx-auto show-card <%= listing.isSold ? 'sold' : '' %>">
 
