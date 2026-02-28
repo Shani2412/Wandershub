@@ -15,7 +15,13 @@
     <% for (let listing of listings) { %>
       <tr>
         <td><%= listing.title %></td>
-        <td><%= listing.owner.username %></td>
+        <td>
+  <% if (listing.owner) { %>
+    <%= listing.owner.username %>
+  <% } else { %>
+    <span class="text-danger">Deleted User</span>
+  <% } %>
+</td>
         <td>₹<%= listing.price %></td>
         <td>
           <form method="POST" action="/admin/listings/<%= listing._id %>?_method=DELETE">

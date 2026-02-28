@@ -99,11 +99,14 @@ function isSeller(req, res, next) {
 function isAdmin(req, res, next) {
   if (!req.session.userId) return res.redirect("/login");
 
-  if (req.session.role !== "admin") {
-    return res.status(403).send("Access Denied");
-  }
-
-  next();
+  User.findById(req.session.userId)
+    .then(user => {
+      if (!user || user.role !== "admin") {
+        return res.status(403).send("Access Denied");
+      }
+      next();
+    })
+    .catch(err => res.status(500).send("Server Error"));
 }
 
 /* ================= AUTH ROUTES ================= */
@@ -504,15 +507,50 @@ app.get("/admin/dashboard", isAdmin, async (req, res) => {
   }
 });
 
+/* ---------- MANAGE USERS ---------- */
+
 app.get("/admin/users", isAdmin, async (req, res) => {
   const users = await User.find({});
   res.render("admin/users", { users });
 });
 
 app.delete("/admin/users/:id", isAdmin, async (req, res) => {
-  await User.findByIdAndDelete(req.params.id);
-  res.redirect("/admin/users");
+  try {
+    const userId = req.params.id;
+
+    // Find all listings of this user
+    const listings = await Listing.find({ owner: userId });
+
+    // Delete Cloudinary images
+    for (let listing of listings) {
+      for (let img of listing.images) {
+        await cloudinary.uploader.destroy(img.filename);
+      }
+    }
+
+    const listingIds = listings.map(l => l._id);
+
+    // Delete reviews of those listings
+    await Review.deleteMany({ listing: { $in: listingIds } });
+
+    // Delete listings
+    await Listing.deleteMany({ owner: userId });
+
+    // Delete reviews written by user
+    await Review.deleteMany({ author: userId });
+
+    // Delete user
+    await User.findByIdAndDelete(userId);
+
+    res.redirect("/admin/users");
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting user");
+  }
 });
+
+/* ---------- MANAGE LISTINGS ---------- */
 
 app.get("/admin/listings", isAdmin, async (req, res) => {
   const listings = await Listing.find({}).populate("owner");
@@ -520,9 +558,31 @@ app.get("/admin/listings", isAdmin, async (req, res) => {
 });
 
 app.delete("/admin/listings/:id", isAdmin, async (req, res) => {
-  await Listing.findByIdAndDelete(req.params.id);
-  res.redirect("/admin/listings");
+  try {
+    const listing = await Listing.findById(req.params.id);
+
+    if (!listing) return res.redirect("/admin/listings");
+
+    // Delete Cloudinary images
+    for (let img of listing.images) {
+      await cloudinary.uploader.destroy(img.filename);
+    }
+
+    // Delete related reviews
+    await Review.deleteMany({ listing: listing._id });
+
+    // Delete listing
+    await Listing.findByIdAndDelete(req.params.id);
+
+    res.redirect("/admin/listings");
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting listing");
+  }
 });
+
+/* ---------- MANAGE REVIEWS ---------- */
 
 app.get("/admin/reviews", isAdmin, async (req, res) => {
   const reviews = await Review.find({}).populate("author listing");
@@ -530,8 +590,13 @@ app.get("/admin/reviews", isAdmin, async (req, res) => {
 });
 
 app.delete("/admin/reviews/:id", isAdmin, async (req, res) => {
-  await Review.findByIdAndDelete(req.params.id);
-  res.redirect("/admin/reviews");
+  try {
+    await Review.findByIdAndDelete(req.params.id);
+    res.redirect("/admin/reviews");
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting review");
+  }
 });
 /* ================= 404 ================= */
 
