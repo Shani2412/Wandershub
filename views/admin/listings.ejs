@@ -1,0 +1,28 @@
+<% layout('/layouts/boilerplate') %>
+
+<h2 class="mb-4">Manage Listings</h2>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Title</th>
+      <th>Owner</th>
+      <th>Price</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (let listing of listings) { %>
+      <tr>
+        <td><%= listing.title %></td>
+        <td><%= listing.owner.username %></td>
+        <td>₹<%= listing.price %></td>
+        <td>
+          <form method="POST" action="/admin/listings/<%= listing._id %>?_method=DELETE">
+            <button class="btn btn-danger btn-sm">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>

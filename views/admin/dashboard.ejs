@@ -1,0 +1,36 @@
+<% layout('/layouts/boilerplate') %>
+
+<div class="container mt-5">
+  <h2 class="mb-4 text-center fw-bold">Admin Dashboard</h2>
+
+  <div class="row g-4">
+
+    <div class="col-md-4">
+      <div class="card text-white bg-primary shadow-lg rounded-4">
+        <div class="card-body text-center">
+          <h5>Total Users</h5>
+          <h2><%= totalUsers %></h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-white bg-success shadow-lg rounded-4">
+        <div class="card-body text-center">
+          <h5>Total Listings</h5>
+          <h2><%= totalListings %></h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-white bg-danger shadow-lg rounded-4">
+        <div class="card-body text-center">
+          <h5>Total Reviews</h5>
+          <h2><%= totalReviews %></h2>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

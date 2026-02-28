@@ -96,6 +96,16 @@ function isSeller(req, res, next) {
   next();
 }
 
+function isAdmin(req, res, next) {
+  if (!req.session.userId) return res.redirect("/login");
+
+  if (req.session.role !== "admin") {
+    return res.status(403).send("Access Denied");
+  }
+
+  next();
+}
+
 /* ================= AUTH ROUTES ================= */
 
 app.get("/", (req, res) => res.redirect("/login"));
@@ -122,6 +132,8 @@ app.post("/login", async (req, res) => {
   }
 
   req.session.userId = user._id;
+  req.session.role = user.role;   // ← YE LINE ADD KARO
+
   res.redirect("/listings");
 });
 
@@ -149,6 +161,7 @@ app.post("/signup", async (req, res) => {
   await user.save();
 
   req.session.userId = user._id;
+  req.session.role = user.role;   // ← YE BHI ADD KARO
   res.redirect("/listings");
 });
 
@@ -175,18 +188,18 @@ app.post("/forgot", async (req, res) => {
         error: "No account with that email",
       });
     }
-const token = crypto.randomBytes(32).toString("hex");
+    const token = crypto.randomBytes(32).toString("hex");
 
-user.resetPasswordToken = token;
-user.resetPasswordExpires = Date.now() + 3600000;
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000;
 
-await user.save();
+    await user.save();
 
-const resetUrl = `${process.env.BASE_URL}/reset/${token}`;
+    const resetUrl = `${process.env.BASE_URL}/reset/${token}`;
 
-res.render("users/forgot-success", {
-  link: resetUrl
-});
+    res.render("users/forgot-success", {
+      link: resetUrl
+    });
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal Server Error");
@@ -471,6 +484,55 @@ app.delete(
   }
 );
 
+
+/* ================= ADMIN ================= */
+
+app.get("/admin/dashboard", isAdmin, async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalListings = await Listing.countDocuments();
+    const totalReviews = await Review.countDocuments();
+
+    res.render("admin/dashboard", {
+      totalUsers,
+      totalListings,
+      totalReviews
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Admin Error");
+  }
+});
+
+app.get("/admin/users", isAdmin, async (req, res) => {
+  const users = await User.find({});
+  res.render("admin/users", { users });
+});
+
+app.delete("/admin/users/:id", isAdmin, async (req, res) => {
+  await User.findByIdAndDelete(req.params.id);
+  res.redirect("/admin/users");
+});
+
+app.get("/admin/listings", isAdmin, async (req, res) => {
+  const listings = await Listing.find({}).populate("owner");
+  res.render("admin/listings", { listings });
+});
+
+app.delete("/admin/listings/:id", isAdmin, async (req, res) => {
+  await Listing.findByIdAndDelete(req.params.id);
+  res.redirect("/admin/listings");
+});
+
+app.get("/admin/reviews", isAdmin, async (req, res) => {
+  const reviews = await Review.find({}).populate("author listing");
+  res.render("admin/reviews", { reviews });
+});
+
+app.delete("/admin/reviews/:id", isAdmin, async (req, res) => {
+  await Review.findByIdAndDelete(req.params.id);
+  res.redirect("/admin/reviews");
+});
 /* ================= 404 ================= */
 
 app.use((req, res) => {

@@ -1,0 +1,40 @@
+<% layout('/layouts/boilerplate') %>
+
+<h2 class="mb-4">Manage Reviews</h2>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Listing</th>
+      <th>Author</th>
+      <th>Rating</th>
+      <th>Comment</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% for (let review of reviews) { %>
+      <tr>
+        <td>
+          <% if (review.listing) { %>
+            <%= review.listing.title %>
+          <% } %>
+        </td>
+        <td>
+          <% if (review.author) { %>
+            <%= review.author.username %>
+          <% } %>
+        </td>
+        <td><%= review.rating %></td>
+        <td><%= review.comment %></td>
+        <td>
+          <form method="POST" action="/admin/reviews/<%= review._id %>?_method=DELETE">
+            <button class="btn btn-danger btn-sm">
+              Delete
+            </button>
+          </form>
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
