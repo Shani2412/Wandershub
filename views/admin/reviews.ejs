@@ -1,40 +1,61 @@
-<% layout('/layouts/boilerplate') %>
+<% layout('/layouts/admin') %>
 
-<h2 class="mb-4">Manage Reviews</h2>
+<div class="admin-section">
 
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Listing</th>
-      <th>Author</th>
-      <th>Rating</th>
-      <th>Comment</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% for (let review of reviews) { %>
-      <tr>
-        <td>
-          <% if (review.listing) { %>
-            <%= review.listing.title %>
-          <% } %>
-        </td>
-        <td>
-          <% if (review.author) { %>
-            <%= review.author.username %>
-          <% } %>
-        </td>
-        <td><%= review.rating %></td>
-        <td><%= review.comment %></td>
-        <td>
-          <form method="POST" action="/admin/reviews/<%= review._id %>?_method=DELETE">
-            <button class="btn btn-danger btn-sm">
-              Delete
-            </button>
-          </form>
-        </td>
-      </tr>
-    <% } %>
-  </tbody>
-</table>
+  <div class="admin-header mb-4">
+    <h2>Manage Reviews</h2>
+    <p class="text-muted">Moderate user feedback</p>
+  </div>
+
+  <div class="admin-card">
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Author</th>
+          <th>Listing</th>
+          <th>Rating</th>
+          <th>Comment</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% reviews.forEach(review => { %>
+          <tr>
+
+            <td class="fw-semibold">
+              <%= review.author?.username || "Unknown" %>
+            </td>
+
+            <td class="text-secondary">
+              <%= review.listing?.title || "Deleted" %>
+            </td>
+
+            <td>
+              <span class="rating-badge">
+                ⭐ <%= review.rating %>
+              </span>
+            </td>
+
+            <td class="review-text">
+              <%= review.comment %>
+            </td>
+
+            <td class="text-end">
+              <form method="POST"
+                    action="/admin/reviews/<%= review._id %>?_method=DELETE">
+                <button class="action-btn delete-btn">
+                  Delete
+                </button>
+              </form>
+            </td>
+
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>

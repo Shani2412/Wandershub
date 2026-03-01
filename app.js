@@ -451,6 +451,7 @@ app.post("/listings/:id/reviews", isLoggedIn, async (req, res) => {
 
   const review = new Review(req.body.review);
   review.author = req.session.userId;
+  review.listing = listing._id;   // 🔥 IMPORTANT LINE
 
   await review.save();
   listing.reviews.push(review._id);
@@ -497,9 +498,10 @@ app.get("/admin/dashboard", isAdmin, async (req, res) => {
     const totalReviews = await Review.countDocuments();
 
     res.render("admin/dashboard", {
-      totalUsers,
-      totalListings,
-      totalReviews
+    currentPage: "dashboard",
+    totalUsers,
+    totalListings,
+    totalReviews
     });
   } catch (err) {
     console.error(err);
@@ -553,8 +555,22 @@ app.delete("/admin/users/:id", isAdmin, async (req, res) => {
 /* ---------- MANAGE LISTINGS ---------- */
 
 app.get("/admin/listings", isAdmin, async (req, res) => {
-  const listings = await Listing.find({}).populate("owner");
-  res.render("admin/listings", { listings });
+  const filter = req.query.filter;
+
+  let query = {};
+
+  if (filter === "active") {
+    query.isSold = false;
+  } else if (filter === "sold") {
+    query.isSold = true;
+  }
+
+  const listings = await Listing.find(query).populate("owner");
+res.render("admin/listings", {
+  currentPage: "listings",
+  listings,
+  currentFilter: filter || "all"
+});
 });
 
 app.delete("/admin/listings/:id", isAdmin, async (req, res) => {
@@ -585,8 +601,14 @@ app.delete("/admin/listings/:id", isAdmin, async (req, res) => {
 /* ---------- MANAGE REVIEWS ---------- */
 
 app.get("/admin/reviews", isAdmin, async (req, res) => {
-  const reviews = await Review.find({}).populate("author listing");
-  res.render("admin/reviews", { reviews });
+  const reviews = await Review.find({})
+    .populate("author")
+    .populate("listing");
+
+  res.render("admin/reviews", {
+  currentPage: "reviews",
+  reviews
+});
 });
 
 app.delete("/admin/reviews/:id", isAdmin, async (req, res) => {

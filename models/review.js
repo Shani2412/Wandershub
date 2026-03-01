@@ -17,6 +17,11 @@ const reviewSchema = new Schema({
     ref: "User",
     required: true,
   },
+  listing: {                         // 🔥 ADD THIS
+    type: Schema.Types.ObjectId,
+    ref: "Listing",
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

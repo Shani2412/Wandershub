@@ -1,34 +1,63 @@
-<% layout('/layouts/boilerplate') %>
+<% layout('/layouts/admin') %>
 
-<h2 class="mb-4">Manage Listings</h2>
+<div class="admin-section">
 
-<table class="table table-bordered">
-  <thead>
-    <tr>
-      <th>Title</th>
-      <th>Owner</th>
-      <th>Price</th>
-      <th>Action</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% for (let listing of listings) { %>
-      <tr>
-        <td><%= listing.title %></td>
-        <td>
-  <% if (listing.owner) { %>
-    <%= listing.owner.username %>
-  <% } else { %>
-    <span class="text-danger">Deleted User</span>
-  <% } %>
-</td>
-        <td>₹<%= listing.price %></td>
-        <td>
-          <form method="POST" action="/admin/listings/<%= listing._id %>?_method=DELETE">
-            <button class="btn btn-danger btn-sm">Delete</button>
-          </form>
-        </td>
-      </tr>
-    <% } %>
-  </tbody>
-</table>
+  <div class="admin-header mb-4">
+    <h2>Manage Listings</h2>
+    <p class="text-muted">Control all platform listings</p>
+  </div>
+
+  <div class="admin-card">
+
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Owner</th>
+          <th>Price</th>
+          <th>Status</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <% listings.forEach(listing => { %>
+          <tr>
+
+            <td class="fw-semibold">
+              <%= listing.title %>
+            </td>
+
+            <td class="text-secondary">
+              <%= listing.owner?.username || "N/A" %>
+            </td>
+
+            <td class="price-text">
+              ₹ <%= listing.price %>
+            </td>
+
+            <td>
+              <% if (listing.isSold) { %>
+                <span class="status-badge sold-status">Sold</span>
+              <% } else { %>
+                <span class="status-badge active-status">Active</span>
+              <% } %>
+            </td>
+
+            <td class="text-end">
+              <form method="POST"
+                    action="/admin/listings/<%= listing._id %>?_method=DELETE">
+                <button class="action-btn delete-btn">
+                  Delete
+                </button>
+              </form>
+            </td>
+
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+  </div>
+
+</div>

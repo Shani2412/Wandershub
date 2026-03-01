@@ -1,15 +1,16 @@
 /* ===============================
-   GLOBAL STYLES
+   GLOBAL
 ================================ */
 
 body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f6f9;
-  color: #333;
+  color: #1f2937;
+  margin: 0;
 }
-h1{
-   font-weight: 600;
-  margin-bottom: 30px;
+
+h1, h2, h3 {
+  font-weight: 600;
 }
 
 /* ===============================
@@ -18,33 +19,21 @@ h1{
 
 a {
   text-decoration: none;
-}
-
-a:hover {
-  text-decoration: none;
+  color: inherit;
 }
 
 /* ===============================
-   CARDS (Login, Signup, Listings)
+   CARDS (GENERAL PAGES)
 ================================ */
 
 .card {
   border-radius: 16px;
-  transition: all 0.25s ease;
+  transition: 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-8px);
-   box-shadow: 0 15px 30px rgba(0,0,0,0.15);
-}
-
-.card.shadow-lg {
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12) !important;
-}
-
-.card-title{
-    font-weight: 600;
-  font-size: 1.1rem;
+  transform: translateY(-6px);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.12);
 }
 
 /* ===============================
@@ -54,12 +43,11 @@ a:hover {
 .form-control {
   border-radius: 10px;
   padding: 0.6rem 0.75rem;
-  border: 1px solid #ced4da;
 }
 
 .form-control:focus {
-  border-color: #fca311;
-  box-shadow: 0 0 0 0.15rem rgba(252, 163, 17, 0.25);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 0.15rem rgba(37,99,235,0.25);
 }
 
 /* ===============================
@@ -68,25 +56,7 @@ a:hover {
 
 .btn {
   border-radius: 10px;
-}
-
-.btn-warning {
-  background-color: #fca311;
-  border: none;
-  color: #000;
-}
-
-.btn-warning:hover {
-  background-color: #e39400;
-  color: #000;
-}
-
-.btn-dark {
-  border-radius: 10px;
-}
-
-.btn-danger {
-  border-radius: 10px;
+  font-weight: 500;
 }
 
 /* ===============================
@@ -95,8 +65,6 @@ a:hover {
 
 .alert {
   border-radius: 12px;
-  font-weight: 500;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* ===============================
@@ -110,122 +78,337 @@ a:hover {
 
 .show-img {
   width: 100%;
-  height: auto;
   max-height: 75vh;
   object-fit: cover;
-  border-radius: 18px;
 }
 
-
 .badge-available {
-  background-color: #198754;
+  background: #10b981;
   padding: 6px 10px;
   border-radius: 8px;
 }
 
 .badge-sold {
-  background-color: #dc3545;
+  background: #ef4444;
   padding: 6px 10px;
   border-radius: 8px;
 }
 
-.request-info {
-  background-color: #fff3cd;
-  border-left: 5px solid #ffc107;
-  padding: 12px 16px;
-  border-radius: 10px;
+/* ===============================
+   ADMIN LAYOUT
+================================ */
+
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+
+.admin-sidebar {
+  width: 260px;
+  background: #111827;
+  color: #e5e7eb;
+  position: fixed;
+  height: 100vh;
+  padding: 40px 25px;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.logo {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 50px;
+  color: white;
+}
+
+.admin-link {
+  display: block;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 12px;
   font-weight: 500;
+  color: #9ca3af;
+  transition: 0.25s ease;
+}
+
+.admin-link:hover {
+  background: #1f2937;
+  color: white;
+}
+
+.admin-link.active {
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+}
+
+/* Main */
+
+.admin-main {
+  margin-left: 260px;
+  padding: 60px;
+  background: #f9fafb;
+  min-height: 100vh;
 }
 
 /* ===============================
-   REVIEWS
+   DASHBOARD HEADER
+================================ */
+
+.dashboard-header h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.dashboard-header p {
+  color: #6b7280;
+  margin-top: 5px;
+}
+
+/* ===============================
+   EYE-CATCHING DASHBOARD CARDS
+================================ */
+
+.stat-box {
+  border-radius: 22px;
+  padding: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.35s ease;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-box span {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.stat-box h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-top: 8px;
+}
+
+.stat-box i {
+  font-size: 3.5rem;
+  opacity: 0.25;
+}
+
+.stat-box:hover {
+  transform: translateY(-12px) scale(1.02);
+}
+
+/* Gradient Themes */
+
+.stat-box.users {
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  box-shadow: 0 20px 50px rgba(99,102,241,0.4);
+}
+
+.stat-box.listings {
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 20px 50px rgba(16,185,129,0.4);
+}
+
+.stat-box.reviews {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 20px 50px rgba(245,158,11,0.4);
+}
+
+/* ===============================
+   TABLE STYLING
+================================ */
+
+.admin-main table {
+  background: white;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.table thead {
+  background: #111827;
+  color: white;
+}
+
+.table-hover tbody tr:hover {
+  background: #f3f4f6;
+}
+
+/* ===============================
+   MODERN ADMIN TABLE DESIGN
+================================ */
+
+.admin-card {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.admin-table thead {
+  background: #374151;
+  color: white;
+}
+
+.admin-table thead th {
+  padding: 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.admin-table tbody td {
+  padding: 18px 16px;
+  vertical-align: middle;
+  font-size: 0.95rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.admin-table tbody tr {
+  transition: 0.2s ease;
+}
+
+.admin-table tbody tr:hover {
+  background: #f3f4f6;
+}
+
+.admin-role {
+  background: #10b981;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.user-role {
+  background: #e5e7eb;
+  color: #111827;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+
+.delete-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+}
+/* Action Buttons */
+
+.action-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.btn-edit {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-delete {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-edit:hover,
+.btn-delete:hover {
+  opacity: 0.85;
+}
+
+/* Price Highlight */
+.price-text {
+  font-weight: 600;
+  color: #2563eb;
+}
+
+/* Status Badges */
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.active-status {
+  background: #10b981;
+  color: white;
+}
+
+.sold-status {
+  background: #ef4444;
+  color: white;
+}
+
+.rating-badge {
+  background: #f59e0b;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.review-text {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===============================
+   STAR RATING FIX
 ================================ */
 
 .star-rating span {
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   cursor: pointer;
   color: #ccc;
+  transition: 0.2s;
 }
 
 .star-rating span.active {
   color: #fca311;
 }
 
-.review-card {
-  border-radius: 14px;
-  background-color: #ffffff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-}
-
-.review-username {
-  font-weight: 600;
-  color: #1c2541;
-}
-
-/* ===============================
-   FOOTER
-================================ */
-
-footer {
-  background-color: #1c2541;
-  color: #eaeaea;
-}
-
-/* ===============================
-   ANIMATIONS
-================================ */
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeIn 0.4s ease;
-}
-
-/* Login error style (minimal & clean) */
-.login-error-box {
-  background: #ffe5e5;
-  border-left: 5px solid #dc3545;
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  text-align: center;
-  animation: shake 0.3s ease;
-}
-
-.login-error-box strong {
-  color: #dc3545;
-  display: block;
-}
-
-.login-error-box p {
-  margin: 0;
-  font-weight: 500;
-}
-.d-flex form {
-  margin: 0;
-}
-
-
-/* subtle shake animation */
-@keyframes shake {
-  0% { transform: translateX(0); }
-  25% { transform: translateX(-4px); }
-  50% { transform: translateX(4px); }
-  75% { transform: translateX(-4px); }
-  100% { transform: translateX(0); }
-}
-
-
 /* ===============================
    RESPONSIVE
 ================================ */
 
+@media (max-width: 992px) {
+  .admin-sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .admin-main {
+    margin-left: 0;
+    padding: 30px;
+  }
+}
