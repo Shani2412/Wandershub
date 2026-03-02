@@ -1,49 +1,47 @@
-<% layout('/layouts/admin') %>
+<% layout('layouts/admin') %>
+<% pageTitle = 'Dashboard' %>
+<% page = 'dashboard' %>
 
-<div class="dashboard-header mb-5">
-  <h2>Admin Dashboard</h2>
-  <p>Platform performance overview</p>
+<div class="wh-page-header">
+  <h1 class="wh-page-title">Overview</h1>
+  <p class="wh-page-sub">Welcome back, Admin. Click any card to manage.</p>
 </div>
 
+<!-- Stat Cards — each is a clickable link -->
 <div class="row g-4">
-
-  <!-- USERS -->
-  <div class="col-lg-4 col-md-6">
-    <a href="/admin/users" class="stat-link">
-      <div class="stat-box users">
-        <div>
-          <span>Total Users</span>
-          <h1><%= totalUsers %></h1>
-        </div>
-        <i class="bi bi-people"></i>
+  <div class="col-12 col-md-4">
+    <a href="/admin/users" class="wh-stat-card wh-stat-card--blue wh-stat-card--link">
+      <div class="wh-stat-card__icon"><i class="bi bi-people-fill"></i></div>
+      <div class="wh-stat-card__body">
+        <p class="wh-stat-card__label">Total Users</p>
+        <h2 class="wh-stat-card__value"><%= totalUsers %></h2>
+        <p class="wh-stat-card__cta">Manage Users <i class="bi bi-arrow-right-short"></i></p>
       </div>
+      <div class="wh-stat-card__bg-icon"><i class="bi bi-people-fill"></i></div>
     </a>
   </div>
 
-  <!-- LISTINGS -->
-  <div class="col-lg-4 col-md-6">
-    <a href="/admin/listings" class="stat-link">
-      <div class="stat-box listings">
-        <div>
-          <span>Total Listings</span>
-          <h1><%= totalListings %></h1>
-        </div>
-        <i class="bi bi-box-seam"></i>
+  <div class="col-12 col-md-4">
+    <a href="/admin/listings" class="wh-stat-card wh-stat-card--purple wh-stat-card--link">
+      <div class="wh-stat-card__icon"><i class="bi bi-shop-window"></i></div>
+      <div class="wh-stat-card__body">
+        <p class="wh-stat-card__label">Total Listings</p>
+        <h2 class="wh-stat-card__value"><%= totalListings %></h2>
+        <p class="wh-stat-card__cta">Manage Listings <i class="bi bi-arrow-right-short"></i></p>
       </div>
+      <div class="wh-stat-card__bg-icon"><i class="bi bi-shop-window"></i></div>
     </a>
   </div>
 
-  <!-- REVIEWS -->
-  <div class="col-lg-4 col-md-6">
-    <a href="/admin/reviews" class="stat-link">
-      <div class="stat-box reviews">
-        <div>
-          <span>Total Reviews</span>
-          <h1><%= totalReviews %></h1>
-        </div>
-        <i class="bi bi-chat-dots"></i>
+  <div class="col-12 col-md-4">
+    <a href="/admin/reviews" class="wh-stat-card wh-stat-card--teal wh-stat-card--link">
+      <div class="wh-stat-card__icon"><i class="bi bi-chat-square-dots-fill"></i></div>
+      <div class="wh-stat-card__body">
+        <p class="wh-stat-card__label">Total Reviews</p>
+        <h2 class="wh-stat-card__value"><%= totalReviews %></h2>
+        <p class="wh-stat-card__cta">Manage Reviews <i class="bi bi-arrow-right-short"></i></p>
       </div>
+      <div class="wh-stat-card__bg-icon"><i class="bi bi-chat-square-dots-fill"></i></div>
     </a>
   </div>
-
 </div>

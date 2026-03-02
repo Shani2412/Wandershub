@@ -1,61 +1,60 @@
-<% layout('/layouts/admin') %>
+<% layout('layouts/admin') %>
+<% pageTitle = 'Reviews' %>
+<% page = 'reviews' %>
 
-<div class="admin-section">
+<div class="wh-page-header">
+  <h1 class="wh-page-title">Reviews</h1>
+  <p class="wh-page-sub">Monitor and moderate user-submitted reviews.</p>
+</div>
 
-  <div class="admin-header mb-4">
-    <h2>Manage Reviews</h2>
-    <p class="text-muted">Moderate user feedback</p>
-  </div>
-
-  <div class="admin-card">
-
-    <table class="admin-table">
+<div class="wh-card">
+  <% if (reviews && reviews.length > 0) { %>
+  <div class="wh-table-wrap">
+    <table class="wh-table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Author</th>
           <th>Listing</th>
-          <th>Rating</th>
+          <th style="text-align:center;">Rating</th>
           <th>Comment</th>
-          <th class="text-end">Action</th>
+          <th style="text-align:center;">Action</th>
         </tr>
       </thead>
-
       <tbody>
-        <% reviews.forEach(review => { %>
-          <tr>
-
-            <td class="fw-semibold">
-              <%= review.author?.username || "Unknown" %>
-            </td>
-
-            <td class="text-secondary">
-              <%= review.listing?.title || "Deleted" %>
-            </td>
-
-            <td>
-              <span class="rating-badge">
-                ⭐ <%= review.rating %>
-              </span>
-            </td>
-
-            <td class="review-text">
-              <%= review.comment %>
-            </td>
-
-            <td class="text-end">
-              <form method="POST"
-                    action="/admin/reviews/<%= review._id %>?_method=DELETE">
-                <button class="action-btn delete-btn">
-                  Delete
-                </button>
+        <% reviews.forEach((review, i) => { %>
+        <tr>
+          <td class="wh-table__index"><%= i + 1 %></td>
+          <td>
+            <div class="wh-user-cell">
+              <span class="wh-avatar wh-avatar--sm"><i class="bi bi-person-fill"></i></span>
+              <span class="wh-user-cell__name"><%= review.author ? review.author.username : 'Anonymous' %></span>
+            </div>
+          </td>
+          <td class="wh-table__muted"><%= review.listing ? review.listing.title : 'N/A' %></td>
+          <td>
+            <div class="wh-cell-center">
+              <span class="wh-badge wh-badge--yellow"><i class="bi bi-star-fill"></i> <%= review.rating %>/5</span>
+            </div>
+          </td>
+          <td class="wh-table__comment"><%= review.comment %></td>
+          <td>
+            <div class="wh-cell-center">
+              <form action="/admin/reviews/<%= review._id %>?_method=DELETE" method="POST">
+                <button class="wh-btn wh-btn--danger"><i class="bi bi-trash3-fill"></i> Delete</button>
               </form>
-            </td>
-
-          </tr>
+            </div>
+          </td>
+        </tr>
         <% }) %>
       </tbody>
     </table>
-
   </div>
-
+  <% } else { %>
+  <div class="wh-empty">
+    <i class="bi bi-chat-square-text wh-empty__icon"></i>
+    <h3 class="wh-empty__title">No Reviews Found</h3>
+    <p class="wh-empty__sub">No reviews have been submitted yet.</p>
+  </div>
+  <% } %>
 </div>

@@ -1,59 +1,68 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Admin Panel</title>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WandersHub Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+  <link rel="stylesheet" href="/css/admin.css"/>
+</head>
+<body>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <link rel="stylesheet" href="/css/style.css" />
-    <link rel="stylesheet" href="/css/navbar.css" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
-      rel="stylesheet"
-    />
-  </head>
-
-  <body>
-    <div class="admin-wrapper">
-
-      <!-- Sidebar -->
-      <aside class="admin-sidebar">
-
-        <h4 class="logo">Admin Panel</h4>
-
-        <nav class="admin-nav">
-
-          <a href="/admin/dashboard"
-             class="admin-link <%= (typeof currentPage !== 'undefined' && currentPage === 'dashboard') ? 'active' : '' %>">
-             <i class="bi bi-speedometer2 me-2"></i> Dashboard
-          </a>
-
-          <a href="/admin/users"
-             class="admin-link <%= (typeof currentPage !== 'undefined' && currentPage === 'users') ? 'active' : '' %>">
-             <i class="bi bi-people me-2"></i> Users
-          </a>
-
-          <a href="/admin/listings"
-             class="admin-link <%= (typeof currentPage !== 'undefined' && currentPage === 'listings') ? 'active' : '' %>">
-             <i class="bi bi-box-seam me-2"></i> Listings
-          </a>
-
-          <a href="/admin/reviews"
-             class="admin-link <%= (typeof currentPage !== 'undefined' && currentPage === 'reviews') ? 'active' : '' %>">
-             <i class="bi bi-chat-dots me-2"></i> Reviews
-          </a>
-
-        </nav>
-
-      </aside>
-
-      <!-- Main Content -->
-      <main class="admin-main">
-        <div class="container-fluid">
-          <%- body %>
-        </div>
-      </main>
-
+  <!-- Sidebar -->
+  <aside class="wh-sidebar">
+    <div class="wh-sidebar__brand">
+      <span class="wh-sidebar__logo wh-sidebar__logo--emoji">🏠</span>
+      <span class="wh-sidebar__name">WandersHub</span>
     </div>
-  </body>
+
+    <nav class="wh-sidebar__nav">
+      <p class="wh-sidebar__label">Main</p>
+      <a href="/admin/dashboard" class="wh-sidebar__link <%= typeof page !== 'undefined' && page === 'dashboard' ? 'active' : '' %>">
+        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+      </a>
+      <a href="/admin/users" class="wh-sidebar__link <%= typeof page !== 'undefined' && page === 'users' ? 'active' : '' %>">
+        <i class="bi bi-people-fill"></i> Users
+      </a>
+      <a href="/admin/listings" class="wh-sidebar__link <%= typeof page !== 'undefined' && page === 'listings' ? 'active' : '' %>">
+        <i class="bi bi-shop-window"></i> Listings
+      </a>
+      <a href="/admin/reviews" class="wh-sidebar__link <%= typeof page !== 'undefined' && page === 'reviews' ? 'active' : '' %>">
+        <i class="bi bi-chat-square-text-fill"></i> Reviews
+      </a>
+
+      <p class="wh-sidebar__label" style="margin-top:2rem;">Account</p>
+      <a href="/" class="wh-sidebar__link">
+        <i class="bi bi-house-fill"></i> Back to Site
+      </a>
+      <a href="/logout" class="wh-sidebar__link wh-sidebar__link--danger">
+        <i class="bi bi-box-arrow-left"></i> Logout
+      </a>
+    </nav>
+
+    <div class="wh-sidebar__footer">
+      <i class="bi bi-shield-lock-fill"></i> Admin Panel v1.0
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="wh-main">
+    <!-- Topbar -->
+    <header class="wh-topbar">
+      <div class="wh-topbar__title">
+        <% if (typeof pageTitle !== 'undefined') { %><%= pageTitle %><% } %>
+      </div>
+      <div class="wh-topbar__right">
+        <span class="wh-badge wh-badge--green"><i class="bi bi-shield-fill-check"></i> Admin</span>
+        <span class="wh-avatar"><i class="bi bi-person-fill"></i></span>
+      </div>
+    </header>
+
+    <!-- Page Body -->
+    <main class="wh-content">
+      <%- body %>
+    </main>
+  </div>
+
+</body>
 </html>

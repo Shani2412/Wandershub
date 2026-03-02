@@ -1,58 +1,73 @@
-<% layout('/layouts/admin') %>
+<% layout('layouts/admin') %>
+<% pageTitle = 'Users' %>
+<% page = 'users' %>
 
-<div class="admin-section">
+<div class="wh-page-header">
+  <h1 class="wh-page-title">Users</h1>
+  <p class="wh-page-sub">Manage all registered members of WandersHub.</p>
+</div>
 
-  <div class="admin-header mb-4">
-    <h2>Manage Users</h2>
-    <p class="text-muted">Control platform users</p>
-  </div>
-
-  <div class="admin-card">
-
-    <table class="admin-table">
+<div class="wh-card">
+  <% if (users && users.length > 0) { %>
+  <div class="wh-table-wrap">
+    <table class="wh-table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Username</th>
           <th>Email</th>
-          <th>Role</th>
-          <th class="text-end">Action</th>
+          <th style="text-align:center;">Role</th>
+          <th>Joined</th>
+          <th style="text-align:center;">Action</th>
         </tr>
       </thead>
-
       <tbody>
-        <% users.forEach(user => { %>
-          <tr>
-
-            <td class="fw-semibold text-dark">
-              <%= user.username %>
-            </td>
-
-            <td class="text-secondary">
-              <%= user.email %>
-            </td>
-
-            <td>
-              <% if (user.role === "admin") { %>
-                <span class="role-badge admin-role">Admin</span>
+        <% users.forEach((user, i) => { %>
+        <tr>
+          <td class="wh-table__index"><%= i + 1 %></td>
+          <td>
+            <div class="wh-user-cell">
+              <span class="wh-avatar wh-avatar--sm"><i class="bi bi-person-fill"></i></span>
+              <span class="wh-user-cell__name"><%= user.username %></span>
+            </div>
+          </td>
+          <td class="wh-table__muted"><%= user.email %></td>
+          <td>
+            <div class="wh-cell-center">
+              <% if (user.role === 'admin') { %>
+                <span class="wh-badge wh-badge--green"><i class="bi bi-shield-fill"></i> Admin</span>
               <% } else { %>
-                <span class="role-badge user-role">User</span>
+                <span class="wh-badge wh-badge--grey"><i class="bi bi-person-fill"></i> User</span>
               <% } %>
-            </td>
-
-            <td class="text-end">
-              <form method="POST"
-                    action="/admin/users/<%= user._id %>?_method=DELETE">
-                <button class="action-btn delete-btn">
-                  Delete
-                </button>
+            </div>
+          </td>
+          <td class="wh-table__muted">
+            <%
+              let joinDate = 'N/A';
+              try {
+                const d = user.createdAt ? new Date(user.createdAt) : new Date(parseInt(user._id.toString().substring(0,8), 16) * 1000);
+                if (!isNaN(d.getTime())) joinDate = d.toLocaleDateString('en-IN', {year:'numeric', month:'short', day:'numeric'});
+              } catch(e) {}
+            %>
+            <%= joinDate %>
+          </td>
+          <td>
+            <div class="wh-cell-center">
+              <form action="/admin/users/<%= user._id %>?_method=DELETE" method="POST">
+                <button class="wh-btn wh-btn--danger"><i class="bi bi-trash3-fill"></i> Delete</button>
               </form>
-            </td>
-
-          </tr>
+            </div>
+          </td>
+        </tr>
         <% }) %>
       </tbody>
     </table>
-
   </div>
-
+  <% } else { %>
+  <div class="wh-empty">
+    <i class="bi bi-people wh-empty__icon"></i>
+    <h3 class="wh-empty__title">No Users Found</h3>
+    <p class="wh-empty__sub">No users have registered yet.</p>
+  </div>
+  <% } %>
 </div>

@@ -1,63 +1,62 @@
-<% layout('/layouts/admin') %>
+<% layout('layouts/admin') %>
+<% pageTitle = 'Listings' %>
+<% page = 'listings' %>
 
-<div class="admin-section">
+<div class="wh-page-header">
+  <h1 class="wh-page-title">Listings</h1>
+  <p class="wh-page-sub">Browse and moderate all active and sold listings.</p>
+</div>
 
-  <div class="admin-header mb-4">
-    <h2>Manage Listings</h2>
-    <p class="text-muted">Control all platform listings</p>
-  </div>
-
-  <div class="admin-card">
-
-    <table class="admin-table">
+<div class="wh-card">
+  <% if (listings && listings.length > 0) { %>
+  <div class="wh-table-wrap">
+    <table class="wh-table">
       <thead>
         <tr>
+          <th>#</th>
           <th>Title</th>
           <th>Owner</th>
           <th>Price</th>
-          <th>Status</th>
-          <th class="text-end">Action</th>
+          <th style="text-align:center;">Status</th>
+          <th style="text-align:center;">Action</th>
         </tr>
       </thead>
-
       <tbody>
-        <% listings.forEach(listing => { %>
-          <tr>
-
-            <td class="fw-semibold">
-              <%= listing.title %>
-            </td>
-
-            <td class="text-secondary">
-              <%= listing.owner?.username || "N/A" %>
-            </td>
-
-            <td class="price-text">
-              ₹ <%= listing.price %>
-            </td>
-
-            <td>
-              <% if (listing.isSold) { %>
-                <span class="status-badge sold-status">Sold</span>
+        <% listings.forEach((listing, i) => { %>
+        <tr>
+          <td class="wh-table__index"><%= i + 1 %></td>
+          <td><span class="wh-table__title"><%= listing.title %></span></td>
+          <td class="wh-table__muted"><%= listing.owner ? listing.owner.username : 'Unknown' %></td>
+          <td>
+            <span class="wh-price">₹<%= listing.price ? listing.price.toLocaleString('en-IN') : '0' %></span>
+          </td>
+          <td>
+            <div class="wh-cell-center">
+              <% const isSold = listing.status === 'sold' || listing.isSold === true || listing.sold === true; %>
+              <% if (isSold) { %>
+                <span class="wh-badge wh-badge--red"><i class="bi bi-x-circle-fill"></i> Sold</span>
               <% } else { %>
-                <span class="status-badge active-status">Active</span>
+                <span class="wh-badge wh-badge--green"><i class="bi bi-check-circle-fill"></i> Active</span>
               <% } %>
-            </td>
-
-            <td class="text-end">
-              <form method="POST"
-                    action="/admin/listings/<%= listing._id %>?_method=DELETE">
-                <button class="action-btn delete-btn">
-                  Delete
-                </button>
+            </div>
+          </td>
+          <td>
+            <div class="wh-cell-center">
+              <form action="/admin/listings/<%= listing._id %>?_method=DELETE" method="POST">
+                <button class="wh-btn wh-btn--danger"><i class="bi bi-trash3-fill"></i> Delete</button>
               </form>
-            </td>
-
-          </tr>
+            </div>
+          </td>
+        </tr>
         <% }) %>
       </tbody>
     </table>
-
   </div>
-
+  <% } else { %>
+  <div class="wh-empty">
+    <i class="bi bi-shop wh-empty__icon"></i>
+    <h3 class="wh-empty__title">No Listings Found</h3>
+    <p class="wh-empty__sub">No listings have been created yet.</p>
+  </div>
+  <% } %>
 </div>
