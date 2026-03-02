@@ -9,11 +9,17 @@
 </head>
 <body>
 
+  <!-- Mobile Overlay -->
+  <div class="wh-overlay" id="overlay" onclick="closeSidebar()"></div>
+
   <!-- Sidebar -->
-  <aside class="wh-sidebar">
+  <aside class="wh-sidebar" id="sidebar">
     <div class="wh-sidebar__brand">
       <span class="wh-sidebar__logo wh-sidebar__logo--emoji">🏠</span>
       <span class="wh-sidebar__name">WandersHub</span>
+      <button class="wh-sidebar__close" onclick="closeSidebar()">
+        <i class="bi bi-x-lg"></i>
+      </button>
     </div>
 
     <nav class="wh-sidebar__nav">
@@ -46,11 +52,18 @@
   </aside>
 
   <!-- Main Content -->
-  <div class="wh-main">
+  <div class="wh-main" id="main">
+
     <!-- Topbar -->
     <header class="wh-topbar">
-      <div class="wh-topbar__title">
-        <% if (typeof pageTitle !== 'undefined') { %><%= pageTitle %><% } %>
+      <div class="wh-topbar__left">
+        <!-- Hamburger — only visible on mobile -->
+        <button class="wh-hamburger" id="hamburger" onclick="openSidebar()">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="wh-topbar__title">
+          <% if (typeof pageTitle !== 'undefined') { %><%= pageTitle %><% } %>
+        </div>
       </div>
       <div class="wh-topbar__right">
         <span class="wh-badge wh-badge--green"><i class="bi bi-shield-fill-check"></i> Admin</span>
@@ -62,7 +75,21 @@
     <main class="wh-content">
       <%- body %>
     </main>
+
   </div>
+
+  <script>
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('overlay').classList.add('show');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+  </script>
 
 </body>
 </html>

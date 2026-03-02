@@ -15,7 +15,7 @@
         <tr>
           <th>#</th>
           <th>Username</th>
-          <th>Email</th>
+          <th class="wh-hide-mobile">Email</th>
           <th style="text-align:center;">Role</th>
           <th>Joined</th>
           <th style="text-align:center;">Action</th>
@@ -31,7 +31,7 @@
               <span class="wh-user-cell__name"><%= user.username %></span>
             </div>
           </td>
-          <td class="wh-table__muted"><%= user.email %></td>
+          <td class="wh-table__muted wh-hide-mobile"><%= user.email %></td>
           <td>
             <div class="wh-cell-center">
               <% if (user.role === 'admin') { %>
