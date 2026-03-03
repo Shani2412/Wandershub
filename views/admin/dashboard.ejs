@@ -4,44 +4,81 @@
 
 <div class="wh-page-header">
   <h1 class="wh-page-title">Overview</h1>
-  <p class="wh-page-sub">Welcome back, Admin. Click any card to manage.</p>
+  <p class="wh-page-sub">Welcome back, Admin.</p>
 </div>
 
-<!-- Stat Cards — each is a clickable link -->
-<div class="row g-4">
-  <div class="col-12 col-md-4">
-    <a href="/admin/users" class="wh-stat-card wh-stat-card--blue wh-stat-card--link">
-      <div class="wh-stat-card__icon"><i class="bi bi-people-fill"></i></div>
-      <div class="wh-stat-card__body">
-        <p class="wh-stat-card__label">Total Users</p>
-        <h2 class="wh-stat-card__value"><%= totalUsers %></h2>
-        <p class="wh-stat-card__cta">Manage Users <i class="bi bi-arrow-right-short"></i></p>
+<div class="wh-cards-row">
+
+  <!-- Users Card -->
+  <div class="wh-cards-col">
+    <a href="/admin/users" class="wh-scard">
+      <div class="wh-scard__top">
+        <div class="wh-scard__brand">
+          <i class="bi bi-people-fill"></i>
+          <span>WandersHub</span>
+        </div>
+        <h2 class="wh-scard__title">Users</h2>
+        <p class="wh-scard__count"><%= totalUsers %> registered</p>
       </div>
-      <div class="wh-stat-card__bg-icon"><i class="bi bi-people-fill"></i></div>
+      <hr class="wh-scard__divider"/>
+      <ul class="wh-scard__list">
+        <li><i class="bi bi-dot"></i> View all registered users</li>
+        <li><i class="bi bi-dot"></i> Manage admin roles</li>
+        <li><i class="bi bi-dot"></i> Delete accounts</li>
+      </ul>
+      <div class="wh-scard__footer">
+        <button class="wh-scard__btn">Manage Users</button>
+      </div>
     </a>
   </div>
 
-  <div class="col-12 col-md-4">
-    <a href="/admin/listings" class="wh-stat-card wh-stat-card--purple wh-stat-card--link">
-      <div class="wh-stat-card__icon"><i class="bi bi-shop-window"></i></div>
-      <div class="wh-stat-card__body">
-        <p class="wh-stat-card__label">Total Listings</p>
-        <h2 class="wh-stat-card__value"><%= totalListings %></h2>
-        <p class="wh-stat-card__cta">Manage Listings <i class="bi bi-arrow-right-short"></i></p>
+  <!-- Listings Card — featured -->
+  <div class="wh-cards-col">
+    <a href="/admin/listings" class="wh-scard wh-scard--featured">
+      <div class="wh-scard__ribbon">Most Active</div>
+      <div class="wh-scard__top">
+        <div class="wh-scard__brand">
+          <i class="bi bi-shop-window"></i>
+          <span>WandersHub</span>
+        </div>
+        <h2 class="wh-scard__title">Listings</h2>
+        <p class="wh-scard__count"><%= totalListings %> properties</p>
+        <p class="wh-scard__sub">Active &amp; sold listings</p>
       </div>
-      <div class="wh-stat-card__bg-icon"><i class="bi bi-shop-window"></i></div>
+      <hr class="wh-scard__divider"/>
+      <ul class="wh-scard__list">
+        <li><i class="bi bi-dot"></i> View all properties</li>
+        <li><i class="bi bi-dot"></i> Track active &amp; sold status</li>
+        <li><i class="bi bi-dot"></i> Remove any listing</li>
+        <li><i class="bi bi-dot"></i> Monitor prices</li>
+      </ul>
+      <div class="wh-scard__footer">
+        <button class="wh-scard__btn wh-scard__btn--featured">Manage Listings</button>
+      </div>
     </a>
   </div>
 
-  <div class="col-12 col-md-4">
-    <a href="/admin/reviews" class="wh-stat-card wh-stat-card--teal wh-stat-card--link">
-      <div class="wh-stat-card__icon"><i class="bi bi-chat-square-dots-fill"></i></div>
-      <div class="wh-stat-card__body">
-        <p class="wh-stat-card__label">Total Reviews</p>
-        <h2 class="wh-stat-card__value"><%= totalReviews %></h2>
-        <p class="wh-stat-card__cta">Manage Reviews <i class="bi bi-arrow-right-short"></i></p>
+  <!-- Reviews Card -->
+  <div class="wh-cards-col">
+    <a href="/admin/reviews" class="wh-scard">
+      <div class="wh-scard__top">
+        <div class="wh-scard__brand">
+          <i class="bi bi-star-fill"></i>
+          <span>WandersHub</span>
+        </div>
+        <h2 class="wh-scard__title">Reviews</h2>
+        <p class="wh-scard__count"><%= totalReviews %> submitted</p>
       </div>
-      <div class="wh-stat-card__bg-icon"><i class="bi bi-chat-square-dots-fill"></i></div>
+      <hr class="wh-scard__divider"/>
+      <ul class="wh-scard__list">
+        <li><i class="bi bi-dot"></i> View all user reviews</li>
+        <li><i class="bi bi-dot"></i> Check star ratings</li>
+        <li><i class="bi bi-dot"></i> Delete reviews</li>
+      </ul>
+      <div class="wh-scard__footer">
+        <button class="wh-scard__btn">Manage Reviews</button>
+      </div>
     </a>
   </div>
+
 </div>

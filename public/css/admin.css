@@ -238,62 +238,183 @@ a { text-decoration: none; color: inherit; }
 .wh-page-sub { color: var(--text-sub); font-size: 0.88rem; margin-top: 0.25rem; }
 
 /* ═══════════════════════════════════════
-   STAT CARDS
+   SPOTIFY-STYLE STAT CARDS
    ═══════════════════════════════════════ */
-.wh-stat-card {
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  position: relative; overflow: hidden;
-  display: flex; align-items: flex-start; gap: 1.1rem;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
-  cursor: default;
-}
-.wh-stat-card:hover { transform: translateY(-5px); box-shadow: 0 16px 48px rgba(0,0,0,0.45); }
-
-.wh-stat-card--blue   { background: linear-gradient(135deg, #3730a3, #6366f1); }
-.wh-stat-card--purple { background: linear-gradient(135deg, #7e22ce, #a855f7); }
-.wh-stat-card--teal   { background: linear-gradient(135deg, #0f766e, #14b8a6); }
-
-.wh-stat-card--link {
-  cursor: pointer;
-  text-decoration: none;
+/* Always 3 columns side by side — no stacking */
+.wh-cards-row {
   display: flex;
+  flex-direction: row;
+  gap: 1.25rem;
+  align-items: stretch;
 }
-.wh-stat-card--link:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 56px rgba(0,0,0,0.5);
-  filter: brightness(1.08);
+.wh-cards-col {
+  flex: 1;
+  min-width: 0;
+}
+.wh-scard {
+  display: flex;
+  flex-direction: column;
+  background: #1a1f2e;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px;
+  padding: 2rem 1.75rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  cursor: pointer;
+}
+.wh-scard:hover {
+  transform: translateY(-5px);
+  background: #1e2436;
+  border-color: rgba(255,255,255,0.16);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
 }
 
-.wh-stat-card__icon {
-  width: 48px; height: 48px;
-  background: rgba(255,255,255,0.18);
-  border-radius: var(--radius-md);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.3rem; color: #fff; flex-shrink: 0;
+/* Featured card */
+.wh-scard--featured {
+  border-color: rgba(255,255,255,0.18);
 }
-.wh-stat-card__body { flex: 1; min-width: 0; }
-.wh-stat-card__label {
-  font-size: 0.72rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  color: rgba(255,255,255,0.7); margin-bottom: 0.3rem;
+.wh-scard--featured:hover {
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 20px 56px rgba(0,0,0,0.55);
 }
-.wh-stat-card__value {
+
+/* Ribbon — like Spotify's "₹99 for 3 months" tag */
+.wh-scard__ribbon {
+  position: absolute;
+  top: -1px; left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  color: #0f111a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 1.1rem;
+  border-radius: 0 0 10px 10px;
+  white-space: nowrap;
+}
+
+/* Top section */
+.wh-scard__top {
+  flex: 1;
+  padding-top: 0.5rem;
+}
+
+/* Brand row — icon + name like Spotify logo */
+.wh-scard__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.wh-scard__brand i {
+  font-size: 1.3rem;
+  color: #fff;
+}
+.wh-scard__brand span {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.02em;
+}
+
+/* Big bold title like "Lite" / "Standard" */
+.wh-scard__title {
   font-family: 'Syne', sans-serif;
-  font-size: 2.4rem; font-weight: 800; color: #fff; line-height: 1;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.05;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
 }
-.wh-stat-card__cta {
-  font-size: 0.73rem; font-weight: 600;
-  color: rgba(255,255,255,0.6);
-  margin-top: 0.5rem;
-  display: flex; align-items: center; gap: 0.1rem;
-  transition: color 0.2s ease, gap 0.2s ease;
-}
-.wh-stat-card--link:hover .wh-stat-card__cta { color: #fff; gap: 0.35rem; }
 
-.wh-stat-card__bg-icon {
-  position: absolute; right: 1rem; bottom: -0.75rem;
-  font-size: 4.5rem; color: rgba(255,255,255,0.07); pointer-events: none;
+/* Count like "₹139 / month" */
+.wh-scard__count {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 0.2rem;
+}
+
+/* Sub like "₹199 / month after" */
+.wh-scard__sub {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 0;
+}
+
+/* Divider */
+.wh-scard__divider {
+  border: none;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin: 1.25rem 0;
+}
+
+/* Feature list — like Spotify bullet points */
+.wh-scard__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  margin-bottom: 1.75rem;
+}
+.wh-scard__list li {
+  display: flex;
+  align-items: center;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.75);
+  line-height: 1.4;
+}
+.wh-scard__list li i {
+  font-size: 1.4rem;
+  color: rgba(255,255,255,0.5);
+  flex-shrink: 0;
+  margin-left: -4px;
+}
+
+/* Footer */
+.wh-scard__footer {
+  margin-top: auto;
+}
+
+/* Big full-width button like Spotify */
+.wh-scard__btn {
+  display: block;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 999px;
+  border: none;
+  background: #fff;
+  color: #0f111a;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+  text-align: center;
+}
+.wh-scard__btn:hover {
+  transform: scale(1.02);
+  background: #e8e8e8;
+}
+.wh-scard__btn--featured {
+  background: #fff;
+  color: #0f111a;
+}
+.wh-scard__btn--featured:hover {
+  background: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .wh-scard { padding: 1.5rem 1.35rem 1.25rem; }
+  .wh-scard__title { font-size: 1.9rem; }
+  .wh-scard__btn { font-size: 0.88rem; padding: 0.8rem; }
 }
 
 /* ═══════════════════════════════════════
