@@ -249,7 +249,18 @@ a { text-decoration: none; color: inherit; }
 }
 .wh-cards-col {
   flex: 1;
-  min-width: 0;
+  min-width: 260px;
+}
+
+/* Mobile — stack vertically */
+@media (max-width: 768px) {
+  .wh-cards-row {
+    flex-direction: column;
+  }
+  .wh-cards-col {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
 }
 .wh-scard {
   display: flex;
