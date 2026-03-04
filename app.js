@@ -117,6 +117,8 @@ app.get("/login", (req, res) => {
   res.render("login", { error: null });
 });
 
+
+
 app.post("/login", async (req, res) => {
   const email = req.body.email.trim();
   const password = req.body.password;
@@ -248,6 +250,16 @@ app.post("/reset/:token", async (req, res) => {
 app.get("/listings", async (req, res) => {
   const allListings = await Listing.find({ isSold: false });
   res.render("listings/index", { allListings });
+});
+
+app.get("/listings/my-listings", isLoggedIn, async (req, res) => {
+
+  const myListings = await Listing.find({
+    owner: req.session.userId
+  });
+
+  res.render("listings/index", { allListings: myListings });
+
 });
 
 app.get("/listings/new", isLoggedIn, (req, res) => {

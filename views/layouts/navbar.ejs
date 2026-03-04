@@ -1,10 +1,10 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm sticky-top">
   <div class="container-fluid">
 
-    <!-- LOGO / BRAND -->
+    <!-- LOGO -->
     <a class="navbar-brand brand-logo" href="/listings">
       <span class="brand-icon">🏡</span>
-      <span class="brand-text">Wandershub</span>
+      <span class="brand-text">WandersHub</span>
     </a>
 
     <!-- TOGGLER -->
@@ -17,106 +17,119 @@
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- NAV ITEMS -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-2">
 
-        <!-- COMMON -->
+        <!-- EXPLORE -->
         <li class="nav-item">
           <a class="nav-link" href="/listings">Explore</a>
         </li>
 
         <% if (currentUser) { %>
 
-          <!-- ADD LISTING -->
-          <li class="nav-item">
-            <a class="nav-link" href="/listings/new">Add Property</a>
-          </li>
+        <!-- ADD PROPERTY -->
+        <li class="nav-item">
+          <a class="nav-link" href="/listings/new">Add Property</a>
+        </li>
 
-          <!-- ADMIN SECTION (ONLY IF ADMIN) -->
-          <% if (currentUser.role === "admin") { %>
+        <!-- ADMIN DROPDOWN -->
+        <% if (currentUser.role === "admin") { %>
 
-            <li class="nav-item">
-              <a class="nav-link text-danger fw-bold" href="/admin/dashboard">
-                Admin Dashboard
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle fw-bold text-warning"
+             href="#"
+             data-bs-toggle="dropdown">
+            Admin
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" href="/admin/dashboard">
+                Dashboard
               </a>
             </li>
 
-            <li class="nav-item">
-              <a class="nav-link text-warning fw-bold" href="/admin/users">
+            <li>
+              <a class="dropdown-item" href="/admin/users">
                 Manage Users
               </a>
             </li>
 
-            <li class="nav-item">
-              <a class="nav-link text-info fw-bold" href="/admin/listings">
+            <li>
+              <a class="dropdown-item" href="/admin/listings">
                 Manage Listings
               </a>
             </li>
 
-            <li class="nav-item">
-              <a class="nav-link text-success fw-bold" href="/admin/reviews">
+            <li>
+              <a class="dropdown-item" href="/admin/reviews">
                 Manage Reviews
               </a>
             </li>
+          </ul>
+        </li>
 
-          <% } %>
+        <% } %>
 
-          <!-- SELLER REQUESTS -->
-          <% if (isSeller) { %>
-            <li class="nav-item">
-              <a class="nav-link position-relative" href="/seller/requests">
-                Requests
-                <% if (requestCount > 0) { %>
-                  <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
-                    <%= requestCount %>
-                  </span>
-                <% } %>
+        <!-- SELLER REQUESTS -->
+        <% if (isSeller) { %>
+        <li class="nav-item">
+          <a class="nav-link position-relative" href="/seller/requests">
+            Requests
+            <% if (requestCount > 0) { %>
+            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">
+              <%= requestCount %>
+            </span>
+            <% } %>
+          </a>
+        </li>
+        <% } %>
+
+        <!-- USER MENU -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center"
+             href="#"
+             role="button"
+             data-bs-toggle="dropdown">
+
+            <span class="me-1">👤</span>
+            <%= currentUser.username %>
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+
+            <li>
+              <a class="dropdown-item" href="/listings/my-listings">
+                My Listings
               </a>
             </li>
-          <% } %>
 
-          <!-- USER DROPDOWN -->
-          <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle d-flex align-items-center"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-            >
-              <span class="me-1">👤</span>
-              <%= currentUser.username %>
-            </a>
+            <li><hr class="dropdown-divider"></li>
 
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li>
-                <a class="dropdown-item" href="/listings">
-                  My Listings
-                </a>
-              </li>
-              <li><hr class="dropdown-divider"></li>
-              <li>
-                <a class="dropdown-item text-danger" href="/logout">
-                  Logout
-                </a>
-              </li>
-            </ul>
-          </li>
+            <li>
+              <a class="dropdown-item text-danger" href="/logout">
+                Logout
+              </a>
+            </li>
+
+          </ul>
+        </li>
 
         <% } else { %>
 
-          <!-- AUTH BUTTONS -->
-          <li class="nav-item">
-            <a class="btn btn-outline-light btn-sm me-2" href="/login">
-              Login
-            </a>
-          </li>
+        <!-- LOGIN -->
+        <li class="nav-item">
+          <a class="btn btn-outline-light btn-sm me-2" href="/login">
+            Login
+          </a>
+        </li>
 
-          <li class="nav-item">
-            <a class="btn btn-warning btn-sm" href="/signup">
-              Sign Up
-            </a>
-          </li>
+        <!-- SIGNUP -->
+        <li class="nav-item">
+          <a class="btn btn-warning btn-sm" href="/signup">
+            Sign Up
+          </a>
+        </li>
 
         <% } %>
 
