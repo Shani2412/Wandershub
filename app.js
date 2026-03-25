@@ -113,11 +113,11 @@ function isAdmin(req, res, next) {
 
 app.get("/", (req, res) => res.redirect("/login"));
 
+/* ================= LOGIN ================= */
+
 app.get("/login", (req, res) => {
   res.render("login", { error: null });
 });
-
-
 
 app.post("/login", async (req, res) => {
   const email = req.body.email.trim();
@@ -136,11 +136,21 @@ app.post("/login", async (req, res) => {
     return res.render("login", { error: "Invalid email or password" });
   }
 
+  // ✅ Session set
   req.session.userId = user._id;
-  req.session.role = user.role;   // ← YE LINE ADD KARO
+  req.session.role = user.role;
 
-  res.redirect("/listings");
+  // 🔥 Admin redirect (MAIN FIX)
+  if (user.role === "admin") {
+    return res.redirect("/admin/dashboard");
+  }
+
+  // Normal user
+  return res.redirect("/listings");
 });
+
+
+/* ================= SIGNUP ================= */
 
 app.get("/signup", (req, res) => {
   res.render("users/signup", { error: null });
@@ -162,13 +172,26 @@ app.post("/signup", async (req, res) => {
   }
 
   const hashed = await bcrypt.hash(password, 12);
-  const user = new User({ username, email, password: hashed });
+
+  // ✅ Default role = user
+  const user = new User({
+    username,
+    email,
+    password: hashed,
+    role: "user"
+  });
+
   await user.save();
 
   req.session.userId = user._id;
-  req.session.role = user.role;   // ← YE BHI ADD KARO
-  res.redirect("/listings");
+  req.session.role = user.role;
+
+  // Signup ke baad normal redirect
+  return res.redirect("/listings");
 });
+
+
+/* ================= LOGOUT ================= */
 
 app.get("/logout", (req, res) => {
   req.session.destroy(() => res.redirect("/login"));
