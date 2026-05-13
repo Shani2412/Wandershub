@@ -177,10 +177,8 @@ app.post("/signup", async (req, res) => {
   const user = new User({
     username,
     email,
-    password: hashed,
-    role: "user"
+    password: hashed
   });
-
   await user.save();
 
   req.session.userId = user._id;
@@ -533,10 +531,10 @@ app.get("/admin/dashboard", isAdmin, async (req, res) => {
     const totalReviews = await Review.countDocuments();
 
     res.render("admin/dashboard", {
-    currentPage: "dashboard",
-    totalUsers,
-    totalListings,
-    totalReviews
+      currentPage: "dashboard",
+      totalUsers,
+      totalListings,
+      totalReviews
     });
   } catch (err) {
     console.error(err);
@@ -601,11 +599,11 @@ app.get("/admin/listings", isAdmin, async (req, res) => {
   }
 
   const listings = await Listing.find(query).populate("owner");
-res.render("admin/listings", {
-  currentPage: "listings",
-  listings,
-  currentFilter: filter || "all"
-});
+  res.render("admin/listings", {
+    currentPage: "listings",
+    listings,
+    currentFilter: filter || "all"
+  });
 });
 
 app.delete("/admin/listings/:id", isAdmin, async (req, res) => {
@@ -641,9 +639,9 @@ app.get("/admin/reviews", isAdmin, async (req, res) => {
     .populate("listing");
 
   res.render("admin/reviews", {
-  currentPage: "reviews",
-  reviews
-});
+    currentPage: "reviews",
+    reviews
+  });
 });
 
 app.delete("/admin/reviews/:id", isAdmin, async (req, res) => {
